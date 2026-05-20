@@ -1,26 +1,154 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg-deep: #0a0a0f;
+  --color-bg-card: #111118;
+  --color-bg-elevated: #1a1a24;
+  --color-bg-surface: #0d0d14;
+  --color-teal: #009688;
+  --color-teal-light: #00bfa5;
+  --color-teal-dark: #00796b;
+  --color-text-primary: #e8e8e8;
+  --color-text-muted: #9e9e9e;
+  --color-text-bright: #ffffff;
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --bg-deep: #0a0a0f;
+  --bg-card: #111118;
+  --bg-elevated: #1a1a24;
+  --bg-surface: #0d0d14;
+  --teal: #009688;
+  --teal-light: #00bfa5;
+  --teal-dark: #00796b;
+  --text-primary: #e8e8e8;
+  --text-muted: #9e9e9e;
+  --text-bright: #ffffff;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+}
+
+/* Thin teal-on-dark custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0d14;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 150, 136, 0.4);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 150, 136, 0.7);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes slot-roll {
+  0% { transform: translateY(0); }
+  10% { transform: translateY(-100%); }
+  20% { transform: translateY(-200%); }
+  30% { transform: translateY(-300%); }
+  40% { transform: translateY(-400%); }
+  50% { transform: translateY(-500%); }
+  60% { transform: translateY(-400%); }
+  70% { transform: translateY(-300%); }
+  80% { transform: translateY(-200%); }
+  90% { transform: translateY(-100%); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(0, 150, 136, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(0, 150, 136, 0.6);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease both;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.animate-slot-roll {
+  animation: slot-roll 3s ease-in-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+}
+
+.btn-teal {
+  background-color: #009688;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 12px rgba(0, 150, 136, 0.25);
+  cursor: pointer;
+}
+
+.btn-teal:hover {
+  background-color: #00bfa5;
+  box-shadow: 0 4px 20px rgba(0, 191, 165, 0.35);
+}
+
+.btn-teal:active {
+  transform: scale(0.95);
+}
+
+.btn-teal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
