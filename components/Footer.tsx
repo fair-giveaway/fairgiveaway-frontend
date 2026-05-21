@@ -14,7 +14,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           <div className="lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden transition-transform group-hover:scale-105">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
                 <Image src="/logo.png" alt="FairGiveaway Logo" width={32} height={32} className="object-cover" />
               </div>
               <span className="text-xl font-bold tracking-tight text-textPrimary">

@@ -146,8 +146,7 @@ export default function XHubPage() {
             return (
               <Link key={item.href} href={item.href} className="group block">
                 <div 
-                  className="neo-card p-6 flex items-center gap-5 transition-all duration-300 hover:-translate-y-1 hover:border-accentPrimary/50"
-                  style={{ animationDelay: `${0.1 + i * 0.1}s` }}
+                  className="neo-card p-6 flex items-center gap-5 transition-all duration-300 hover:-translate-y-1 hover:border-accentPrimary/50 group"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-bgBase border border-borderSubtle text-2xl text-textSecondary transition-colors group-hover:text-accentPrimary">
                     <Icon />

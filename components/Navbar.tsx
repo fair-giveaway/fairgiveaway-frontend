@@ -41,7 +41,7 @@ export function Navbar() {
         >
           {/* Logo */}
           <Link href="/" className="group flex items-center gap-2" onClick={() => setIsOpen(false)}>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden transition-transform group-hover:scale-105">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
               <Image src="/logo.png" alt="FairGiveaway Logo" width={32} height={32} className="object-cover" />
             </div>
             <span className="text-lg font-bold tracking-tight text-textPrimary">

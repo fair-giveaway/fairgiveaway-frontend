@@ -75,11 +75,11 @@
   }
   
   .neo-button-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-accentPrimary text-bgBase px-6 py-2.5 font-medium transition-all hover:bg-accentHover hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center rounded-full bg-accentPrimary text-bgBase px-6 py-2.5 font-medium transition-all hover:bg-accentHover disabled:opacity-50 disabled:pointer-events-none;
   }
   
   .neo-button-secondary {
-    @apply inline-flex items-center justify-center rounded-full bg-transparent border border-borderStrong text-textPrimary px-6 py-2.5 font-medium transition-all hover:bg-borderSubtle hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center rounded-full bg-transparent border border-borderStrong text-textPrimary px-6 py-2.5 font-medium transition-all hover:bg-borderSubtle disabled:opacity-50 disabled:pointer-events-none;
   }
 
   .neo-input {

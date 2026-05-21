@@ -34,14 +34,16 @@ export default function PlatformLeaderboardPage({ params }: { params: Promise<{ 
     <div className="min-h-screen pt-32 pb-24">
       <div className="neo-container max-w-4xl animate-fade-in-up">
         
-        <header className="mb-12">
-          <p className="neo-label-sm mb-3 flex items-center gap-2">
+        <header className="mb-12 text-center">
+          <p className="neo-label-sm mb-3 flex items-center justify-center gap-2">
             <FaTrophy /> Global Rankings
           </p>
-          <h1 className="neo-title flex items-center gap-4">
+          <h1 className="neo-title flex items-center justify-center gap-4 mb-4">
             {platform === 'x' ? <FaXTwitter /> : <FaCube />}
-            <span className="capitalize">{platform} Hosts</span>
           </h1>
+          <p className="neo-subtitle max-w-2xl mx-auto">
+            Top hosts ranked by total giveaways and participants on {platform === 'x' ? 'X / Twitter' : <span className="capitalize">{platform}</span>}.
+          </p>
         </header>
 
         <div className="space-y-4">
@@ -62,7 +64,6 @@ export default function PlatformLeaderboardPage({ params }: { params: Promise<{ 
                   className={`neo-card p-6 flex items-center gap-5 transition-all ${
                     isTop3 ? 'border-accentPrimary/50 bg-accentPrimary/5' : ''
                   }`}
-                  style={{ animationDelay: `${i * 0.05}s` }}
                 >
                   <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold text-lg ${
                     i === 0 ? 'bg-[#fbbf24] text-[#78350f]' :

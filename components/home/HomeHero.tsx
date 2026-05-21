@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FaShieldHalved } from 'react-icons/fa6';
+import Image from 'next/image';
 
 export function HomeHero() {
   return (
@@ -10,13 +10,10 @@ export function HomeHero() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-[100%] bg-gradient-glow blur-[100px] pointer-events-none" />
       
       <div className="neo-container relative z-10 text-center flex flex-col items-center">
-        <div 
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-borderSubtle bg-bgFloat backdrop-blur-md mb-8 animate-fade-in-up"
-        >
-          <FaShieldHalved className="text-accentPrimary" />
-          <span className="text-sm font-medium text-textSecondary tracking-wide">100% Provably Fair</span>
+        <div className="mb-8 animate-fade-in-up">
+          <Image src="/logo.png" alt="FairGiveaway Logo" width={96} height={96} className="mx-auto" />
         </div>
-        
+
         <h1 className="neo-title mb-8 max-w-4xl mx-auto animate-fade-in-up stagger-1">
           Immutable giveaways.
           <br className="hidden md:block" />

@@ -34,14 +34,16 @@ export default function PlatformHistoryPage({ params }: { params: Promise<{ plat
     <div className="min-h-screen pt-32 pb-24">
       <div className="neo-container max-w-4xl animate-fade-in-up">
         
-        <header className="mb-12">
-          <p className="neo-label-sm mb-3 flex items-center gap-2">
+        <header className="mb-12 text-center">
+          <p className="neo-label-sm mb-3 flex items-center justify-center gap-2">
             <FaClockRotateLeft /> Draw History
           </p>
-          <h1 className="neo-title flex items-center gap-4">
+          <h1 className="neo-title flex items-center justify-center gap-4 mb-4">
             {platform === 'x' ? <FaXTwitter /> : <FaCube />}
-            <span className="capitalize">{platform} Platform</span>
           </h1>
+          <p className="neo-subtitle max-w-2xl mx-auto">
+            Browse all finalized giveaway draws and results for {platform === 'x' ? 'X / Twitter' : <span className="capitalize">{platform}</span>}.
+          </p>
         </header>
 
         <div className="space-y-4">
@@ -62,7 +64,6 @@ export default function PlatformHistoryPage({ params }: { params: Promise<{ plat
               >
                 <div 
                   className="neo-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all hover:border-accentPrimary"
-                  style={{ animationDelay: `${i * 0.05}s` }}
                 >
                   <div>
                     <h3 className="text-lg font-bold text-textPrimary mb-1">

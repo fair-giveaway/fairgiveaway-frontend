@@ -45,7 +45,7 @@ export function HomeFeaturesSection() {
                 key={feature.title}
                 className="neo-card p-8 lg:p-10 group"
               >
-                <div className="h-12 w-12 rounded-xl bg-bgBase border border-borderStrong flex items-center justify-center mb-6 text-textPrimary transition-transform group-hover:scale-110">
+                <div className="h-12 w-12 rounded-xl bg-bgBase border border-borderStrong flex items-center justify-center mb-6 text-textPrimary">
                   <Icon className="text-xl" />
                 </div>
                 <h4 className="text-xl font-bold text-textPrimary mb-3">

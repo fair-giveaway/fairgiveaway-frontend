@@ -51,7 +51,6 @@ export default function PlatformsHubPage() {
               <Link key={platform.id} href={`/platforms/${platform.id}`} className="group block">
                 <div 
                   className="neo-card p-8 flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:border-accentPrimary/50"
-                  style={{ animationDelay: `${0.1 * i}s` }}
                 >
                   <div className="h-16 w-16 rounded-2xl bg-bgBase border border-borderSubtle flex items-center justify-center mb-6 text-textSecondary transition-colors group-hover:text-accentPrimary group-hover:bg-accentPrimary/5">
                     <Icon className="text-3xl" />
