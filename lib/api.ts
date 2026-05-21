@@ -4,12 +4,19 @@ export interface Winner {
   username: string;
   type: string;
   status: string;
+  /** TODO:BACKEND — This URL will be populated by the backend scraper (sacrificial X account).
+   *  The scraper fetches the real `pbs.twimg.com` profile image URL during winner verification.
+   *  Current mock uses unavatar.io as a temporary placeholder. */
+  avatarUrl?: string;
 }
 
 export interface GiveawayDoc {
   _id: string;
   tweetId: string;
   hostUsername: string;
+  /** TODO:BACKEND — Same as Winner.avatarUrl. The backend stores the host's real profile photo
+   *  URL when initializing the draw via the sacrificial X account scraper. */
+  hostAvatarUrl?: string;
   platform: string;
   mode: string;
   totalParticipants: number;
@@ -37,6 +44,7 @@ export interface DrawStatusResult {
   drawId?: string;
   mode?: string;
   tweetId?: string;
+  hostUsername?: string;
 }
 
 export interface LeaderboardEntry {
@@ -71,42 +79,42 @@ const MOCK_PARTICIPANTS = [
 ];
 
 // --- IN-MEMORY MOCK STORE ---
-const INITIAL_MOCK_HISTORY: GiveawayDoc[] = [
-  {
-    _id: 'draw_1',
-    tweetId: '1234567890',
-    hostUsername: 'elonmusk',
-    platform: 'x',
-    mode: 'retweets',
-    totalParticipants: 1542,
-    winners: [{ username: 'lucky_user', type: 'primary', status: 'verified' }],
-    createdAt: new Date().toISOString(),
-  },
-  {
-    _id: 'draw_2',
-    tweetId: '0987654321',
-    hostUsername: 'mrbeast',
-    platform: 'x',
-    mode: 'replies',
-    totalParticipants: 10420,
-    winners: [
-      { username: 'winner_one', type: 'primary', status: 'verified' },
-      { username: 'winner_two', type: 'secondary', status: 'verified' },
-      { username: 'winner_three', type: 'secondary', status: 'verified' }
-    ],
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-  },
-  {
-    _id: 'draw_3',
-    tweetId: '1122334455',
-    hostUsername: 'vercel',
-    platform: 'x',
-    mode: 'likes',
-    totalParticipants: 532,
-    winners: [{ username: 'dev_guy', type: 'primary', status: 'verified' }],
-    createdAt: new Date(Date.now() - 172800000).toISOString(),
-  }
-];
+function generateMockHistory(): GiveawayDoc[] {
+  const hosts = [
+    'elonmusk', 'mrbeast', 'vercel', 'nextjs', 'github',
+    'tailwindcss', 'figma', 'linear', 'supabase', 'prisma',
+    'turborepo', 'drizzleorm', 'cloudflare', 'railway', 'fly_io',
+    'planetscale', 'upstash', 'convex_dev', 'resend', 'cal',
+    'notion', 'arc_browser', 'cursor_ai', 'vaborofficial', 'discord',
+  ];
+  const modes = ['retweets', 'replies', 'likes', 'reposts', 'quotes'];
+  const names = MOCK_PARTICIPANTS;
+  const DAY = 86400000;
+
+  return hosts.map((host, i) => {
+    const winnerCount = (i % 3) + 1;
+    const winners = Array.from({ length: winnerCount }, (_, wi) => ({
+      username: names[(i * 3 + wi) % names.length],
+      type: wi === 0 ? 'primary' : 'secondary',
+      status: 'verified',
+      avatarUrl: `https://unavatar.io/twitter/${names[(i * 3 + wi) % names.length]}`,
+    }));
+
+    return {
+      _id: `draw_${i + 1}`,
+      tweetId: `${1800000000000000000 + i * 1000}`,
+      hostUsername: host,
+      hostAvatarUrl: `https://unavatar.io/twitter/${host}`,
+      platform: 'x',
+      mode: modes[i % modes.length],
+      totalParticipants: 200 + Math.floor(Math.pow(i + 1, 2.3) * 10),
+      winners,
+      createdAt: new Date(Date.now() - i * DAY).toISOString(),
+    };
+  });
+}
+
+const INITIAL_MOCK_HISTORY: GiveawayDoc[] = generateMockHistory();
 
 function getMockHistory(): GiveawayDoc[] {
   if (typeof window === 'undefined') return INITIAL_MOCK_HISTORY;
@@ -131,13 +139,19 @@ function saveMockHistory(data: GiveawayDoc) {
   }
 }
 
-// --- SESSION STORAGE for active draw sessions (simulates Upstash Redis) ---
-export function cacheDrawSession(drawId: string, data: { participants: string[]; tweetId: string; mode: string }) {
+interface CachedSession {
+  participants: string[];
+  tweetId: string;
+  mode: string;
+  hostUsername: string;
+}
+
+export function cacheDrawSession(drawId: string, data: CachedSession) {
   if (typeof window === 'undefined') return;
   sessionStorage.setItem(`draw:${drawId}`, JSON.stringify(data));
 }
 
-export function getCachedDrawSession(drawId: string): { participants: string[]; tweetId: string; mode: string } | null {
+export function getCachedDrawSession(drawId: string): CachedSession | null {
   if (typeof window === 'undefined') return null;
   try {
     const stored = sessionStorage.getItem(`draw:${drawId}`);
@@ -157,14 +171,13 @@ export async function searchDraw(drawId: string): Promise<DrawSearchResult> {
   }, 500));
 }
 
-export async function initDraw(tweetId: string, mode: string): Promise<DrawInitResult> {
+export async function initDraw(tweetId: string, mode: string, hostUsername: string = 'unknown'): Promise<DrawInitResult> {
   const drawId = `mock_draw_${Math.floor(Math.random() * 10000)}`;
   const shuffled = [...MOCK_PARTICIPANTS].sort(() => Math.random() - 0.5);
-  const count = Math.floor(Math.random() * 12) + 15; // 15-26 participants
+  const count = Math.floor(Math.random() * 12) + 15;
   const participants = shuffled.slice(0, count);
 
-  // Cache in sessionStorage (simulates Upstash Redis)
-  cacheDrawSession(drawId, { participants, tweetId, mode: 'reposts' });
+  cacheDrawSession(drawId, { participants, tweetId, mode: 'reposts', hostUsername });
 
   return new Promise(resolve => setTimeout(() => resolve({
     drawId,
@@ -177,7 +190,6 @@ export async function initDraw(tweetId: string, mode: string): Promise<DrawInitR
 
 export async function getDrawStatus(id: string): Promise<DrawStatusResult> {
   return new Promise(resolve => setTimeout(() => {
-    // Check finalized history first
     const history = getMockHistory();
     const finalized = history.find(d => d._id === id);
     if (finalized) {
@@ -185,7 +197,6 @@ export async function getDrawStatus(id: string): Promise<DrawStatusResult> {
       return;
     }
 
-    // Check active session cache
     const cached = getCachedDrawSession(id);
     if (cached) {
       resolve({
@@ -194,20 +205,21 @@ export async function getDrawStatus(id: string): Promise<DrawStatusResult> {
         drawId: id,
         mode: cached.mode,
         tweetId: cached.tweetId,
+        hostUsername: cached.hostUsername,
       });
       return;
     }
 
-    // Fallback for any draw ID — generate mock data
     const shuffled = [...MOCK_PARTICIPANTS].sort(() => Math.random() - 0.5);
     const participants = shuffled.slice(0, 20);
-    cacheDrawSession(id, { participants, tweetId: '1234567890', mode: 'reposts' });
+    cacheDrawSession(id, { participants, tweetId: '1234567890', mode: 'reposts', hostUsername: 'unknown' });
     resolve({
       status: 'active',
       participants,
       drawId: id,
       mode: 'reposts',
-      tweetId: '1234567890'
+      tweetId: '1234567890',
+      hostUsername: 'unknown',
     });
   }, 500));
 }
@@ -216,6 +228,7 @@ export interface SaveDrawPayload {
   drawId: string;
   tweetId: string;
   hostUsername: string;
+  hostAvatarUrl?: string;
   mode: string;
   totalParticipants: number;
   winners: Winner[];
@@ -226,7 +239,8 @@ export async function saveDraw(data: SaveDrawPayload): Promise<{ success: boolea
     saveMockHistory({
       _id: data.drawId,
       tweetId: data.tweetId,
-      hostUsername: data.hostUsername || 'simulated_user',
+      hostUsername: data.hostUsername || 'unknown',
+      hostAvatarUrl: data.hostAvatarUrl,
       platform: 'x',
       mode: data.mode,
       totalParticipants: data.totalParticipants,

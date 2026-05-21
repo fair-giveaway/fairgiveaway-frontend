@@ -10,10 +10,13 @@ function extractTweetId(url: string): string | null {
   if (!url.trim()) return null;
   const match = url.match(/status\/(\d+)/);
   if (match) return match[1];
-  
-  // For easier testing: accept any numbers or raw string
   const numbers = url.match(/(\d+)/);
   return numbers ? numbers[1] : url.trim();
+}
+
+function extractUsername(url: string): string {
+  const match = url.match(/(?:x\.com|twitter\.com)\/([^/]+)\/status/);
+  return match ? match[1] : 'unknown';
 }
 
 const SUB_NAV = [
@@ -38,10 +41,11 @@ export default function XHubPage() {
       return;
     }
 
+    const host = extractUsername(postUrl);
     setLoading(true);
     setError('');
     try {
-      const res = await initDraw(tweetId, 'reposts');
+      const res = await initDraw(tweetId, 'reposts', host);
       router.push(`/platforms/x/draw/${res.drawId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to initialize draw.');

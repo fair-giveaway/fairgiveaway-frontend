@@ -41,6 +41,7 @@ export default function DrawPage({ params }: { params: Promise<{ id: string }> }
           drawId: id,
           mode: cached.mode,
           tweetId: cached.tweetId,
+          hostUsername: cached.hostUsername,
         });
         setLoading(false);
         return;
@@ -91,7 +92,7 @@ export default function DrawPage({ params }: { params: Promise<{ id: string }> }
   }
 
   return (
-    <div className="py-32 px-6 max-w-7xl mx-auto">
+    <div className="py-24 px-4 lg:px-6 max-w-7xl mx-auto">
       {data.status === 'active' && (
         <ActiveSession drawId={id} data={data} onFinalized={fetchStatus} />
       )}

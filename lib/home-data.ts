@@ -9,12 +9,8 @@ export const PLATFORMS = [
 ];
 
 export const CREATOR_SOCIALS = [
-  { href: 'https://eslint-ai-guardrails.vercel.app/', label: 'Website' },
+  { href: 'https://isaacnewton.store', label: 'Website' },
   { href: 'https://github.com/isaacnewton123', label: 'GitHub' },
-  { href: 'https://x.com/isaac_newton252', label: 'X' },
-  { href: 'https://www.facebook.com/hanif.maulana.108/', label: 'Facebook' },
-  { href: 'https://www.linkedin.com/in/hanif-maulana-210b4721b/', label: 'LinkedIn' },
-  { href: 'https://www.instagram.com/hanifmaulana2/', label: 'Instagram' },
 ];
 
 export const FEATURES = [

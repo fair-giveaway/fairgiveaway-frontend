@@ -3,16 +3,15 @@
 import { useState, useEffect } from 'react';
 import { FaLock, FaClipboard, FaCheck, FaXTwitter, FaClockRotateLeft } from 'react-icons/fa6';
 import { type GiveawayDoc, getDrawsByTweetId } from '@/lib/api';
+import Avatar from '../ui/Avatar';
 
 export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; drawId: string }) {
   const [copied, setCopied] = useState(false);
   const [pastDraws, setPastDraws] = useState<GiveawayDoc[]>([]);
 
   useEffect(() => {
-    // Fetch past draws for the same tweet to enable transparency auditing
     if (data.tweetId) {
       getDrawsByTweetId(data.tweetId).then((draws) => {
-        // Exclude the current draw from the list
         setPastDraws(draws.filter((d) => d._id !== data._id));
       });
     }
@@ -53,19 +52,16 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
       )}
 
       {/* Locked Banner */}
-      <div className="mb-12 rounded-2xl border border-accentPrimary/30 bg-accentPrimary/5 p-8 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-accentPrimary/5 blur-[50px] pointer-events-none" />
-        <div className="relative z-10">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accentPrimary/10 text-2xl text-accentPrimary">
-            <FaLock />
-          </div>
-          <h2 className="text-2xl font-bold text-textPrimary">
-            Provably Fair & Locked
-          </h2>
-          <p className="mt-2 text-textSecondary font-medium">
-            This draw has been finalized. The results are permanently recorded and cannot be altered.
-          </p>
+      <div className="neo-card mb-10 p-8 text-center">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-bgBase border border-borderSubtle text-xl text-accentPrimary">
+          <FaLock />
         </div>
+        <h2 className="text-xl font-bold text-textPrimary">
+          Provably Fair & Locked
+        </h2>
+        <p className="mt-2 text-sm text-textSecondary">
+          This draw has been finalized. Results are permanently recorded and cannot be altered.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -84,11 +80,11 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
             <div>
               <span className="neo-label-sm mb-2 block">Host</span>
               <div className="flex items-center gap-2">
-                {data.hostUsername && data.hostUsername !== 'Anonymous' && (
-                  <img src={`https://unavatar.io/twitter/${data.hostUsername}`} alt={data.hostUsername} className="w-6 h-6 rounded-full object-cover border border-borderStrong bg-bgElevated" />
+                {data.hostUsername && !['unknown', 'Anonymous', 'simulated_user'].includes(data.hostUsername) && (
+                  <Avatar username={data.hostUsername} src={data.hostAvatarUrl} size="sm" />
                 )}
                 <span className="text-sm font-semibold text-textPrimary">
-                  {data.hostUsername === 'Anonymous' ? 'Anonymous Host' : `@${data.hostUsername}`}
+                  {(!data.hostUsername || ['unknown', 'Anonymous', 'simulated_user'].includes(data.hostUsername)) ? 'Unknown' : `@${data.hostUsername}`}
                 </span>
               </div>
             </div>
@@ -128,7 +124,7 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
                 key={i}
                 className="flex items-center gap-4 p-4 rounded-xl border border-accentPrimary/30 bg-accentPrimary/5"
               >
-                <img src={`https://unavatar.io/twitter/${w.username}`} alt={w.username} className="w-12 h-12 rounded-full object-cover border-2 border-bgBase bg-bgElevated shrink-0" />
+                <Avatar username={w.username} src={w.avatarUrl} size="lg" />
                 <div className="flex flex-col">
                   <span className="font-bold text-lg text-textPrimary leading-tight">
                     @{w.username}
@@ -145,7 +141,7 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
                 key={i}
                 className="flex items-center gap-4 p-4 rounded-xl border border-borderStrong bg-bgBase"
               >
-                <img src={`https://unavatar.io/twitter/${w.username}`} alt={w.username} className="w-10 h-10 rounded-full object-cover border-2 border-bgElevated bg-bgBase shrink-0 opacity-80" />
+                <Avatar username={w.username} src={w.avatarUrl} size="md" />
                 <div className="flex flex-col">
                   <span className="font-semibold text-textSecondary leading-tight">
                     @{w.username}
@@ -162,7 +158,7 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
           <div className="mt-8 space-y-3">
             <button
               onClick={shareToX}
-              className="w-full h-14 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-400 hover:to-indigo-400 text-white font-bold text-lg flex items-center justify-center gap-2 shadow-lg shadow-violet-500/25 transition-all hover:shadow-violet-500/40"
+              className="neo-button-primary w-full h-14 text-base gap-2 font-bold"
             >
               <FaXTwitter /> Share Results to X
             </button>

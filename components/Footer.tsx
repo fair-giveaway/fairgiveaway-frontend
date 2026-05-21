@@ -31,7 +31,7 @@ export function Footer() {
               <a href="https://x.com/isaac_newton252" target="_blank" rel="noopener noreferrer" className="text-textMuted hover:text-textPrimary transition-colors" aria-label="X (Twitter)">
                 <FaXTwitter className="text-xl" />
               </a>
-              <a href="https://eslint-ai-guardrails.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-textMuted hover:text-textPrimary transition-colors" aria-label="Website">
+              <a href="https://fairgiveaway.online" target="_blank" rel="noopener noreferrer" className="text-textMuted hover:text-textPrimary transition-colors" aria-label="Website">
                 <FaGlobe className="text-xl" />
               </a>
             </div>

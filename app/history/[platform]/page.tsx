@@ -1,13 +1,21 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
-import { FaClockRotateLeft, FaXTwitter, FaTrophy, FaCube } from 'react-icons/fa6';
+import { useEffect, useState, use, useMemo } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { FaClockRotateLeft, FaXTwitter, FaTrophy, FaCube, FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { getHistory, type GiveawayDoc } from '@/lib/api';
+import Avatar from '@/components/ui/Avatar';
+
+const PER_PAGE = 10;
 
 export default function PlatformHistoryPage({ params }: { params: Promise<{ platform: string }> }) {
   const { platform } = use(params);
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [draws, setDraws] = useState<GiveawayDoc[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const page = Math.max(1, Number(searchParams.get('page')) || 1);
 
   useEffect(() => {
     async function load() {
@@ -27,8 +35,21 @@ export default function PlatformHistoryPage({ params }: { params: Promise<{ plat
       }
     }
     load();
-    document.title = `${platform.toUpperCase()} History | FairGiveaway.online`;
-  }, [platform]);
+    document.title = `${platform.toUpperCase()} History${page > 1 ? ` — Page ${page}` : ''} | FairGiveaway.online`;
+  }, [platform, page]);
+
+  const totalPages = Math.max(1, Math.ceil(draws.length / PER_PAGE));
+  const safePage = Math.min(page, totalPages);
+  const paged = useMemo(
+    () => draws.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE),
+    [draws, safePage],
+  );
+
+  const goToPage = (p: number) => {
+    const params = new URLSearchParams();
+    if (p > 1) params.set('page', String(p));
+    router.push(`/history/${platform}${p > 1 ? `?${params}` : ''}`);
+  };
 
   return (
     <div className="min-h-screen pt-32 pb-24">
@@ -56,7 +77,7 @@ export default function PlatformHistoryPage({ params }: { params: Promise<{ plat
               <p className="text-textSecondary">No finalized draws found for this platform yet.</p>
             </div>
           ) : (
-            draws.map((draw, i) => (
+            paged.map((draw) => (
               <a 
                 key={draw._id} 
                 href={`/history/${platform}/${draw._id}`}
@@ -66,11 +87,11 @@ export default function PlatformHistoryPage({ params }: { params: Promise<{ plat
                   className="neo-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all hover:border-accentPrimary"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full overflow-hidden bg-bgElevated shrink-0 border border-borderStrong">
+                    <div className="h-12 w-12 shrink-0">
                       {draw.hostUsername ? (
-                        <img src={`https://unavatar.io/twitter/${draw.hostUsername}`} alt={draw.hostUsername} className="w-full h-full object-cover" />
+                        <Avatar username={draw.hostUsername} src={draw.hostAvatarUrl} size="lg" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-textMuted"><FaCube /></div>
+                        <div className="w-12 h-12 rounded-full bg-bgElevated border border-borderStrong flex items-center justify-center text-textMuted"><FaCube /></div>
                       )}
                     </div>
                     <div>
@@ -96,14 +117,14 @@ export default function PlatformHistoryPage({ params }: { params: Promise<{ plat
                     {draw.winners.length > 0 && (
                       <div className="flex -space-x-2">
                         {draw.winners.slice(0, 3).map((w, idx) => (
-                          <img 
+                          <div
                             key={w.username}
-                            src={`https://unavatar.io/twitter/${w.username}`} 
-                            alt={w.username}
-                            className="w-8 h-8 rounded-full border-2 border-bgBase bg-bgElevated object-cover shadow-sm relative"
+                            className="relative"
                             style={{ zIndex: 10 - idx }}
                             title={`Winner: @${w.username}`}
-                          />
+                          >
+                            <Avatar username={w.username} src={w.avatarUrl} size="sm" />
+                          </div>
                         ))}
                         {draw.winners.length > 3 && (
                           <div className="w-8 h-8 rounded-full border-2 border-bgBase bg-bgElevated text-[10px] font-bold text-textSecondary flex items-center justify-center relative shadow-sm" style={{ zIndex: 0 }}>
@@ -118,6 +139,45 @@ export default function PlatformHistoryPage({ params }: { params: Promise<{ plat
             ))
           )}
         </div>
+
+        {/* Pagination */}
+        {!loading && totalPages > 1 && (
+          <nav className="flex items-center justify-center gap-2 mt-10" aria-label="Pagination">
+            <button
+              onClick={() => goToPage(safePage - 1)}
+              disabled={safePage <= 1}
+              className="h-10 w-10 rounded-lg flex items-center justify-center border border-borderStrong bg-bgElevated text-textPrimary hover:border-accentPrimary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Previous page"
+            >
+              <FaChevronLeft className="text-xs" />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => goToPage(p)}
+                className={`h-10 w-10 rounded-lg flex items-center justify-center text-sm font-bold transition-colors ${
+                  p === safePage
+                    ? 'bg-accentPrimary text-white border border-accentPrimary'
+                    : 'border border-borderStrong bg-bgElevated text-textSecondary hover:border-accentPrimary hover:text-textPrimary'
+                }`}
+                aria-current={p === safePage ? 'page' : undefined}
+                aria-label={`Page ${p}`}
+              >
+                {p}
+              </button>
+            ))}
+
+            <button
+              onClick={() => goToPage(safePage + 1)}
+              disabled={safePage >= totalPages}
+              className="h-10 w-10 rounded-lg flex items-center justify-center border border-borderStrong bg-bgElevated text-textPrimary hover:border-accentPrimary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Next page"
+            >
+              <FaChevronRight className="text-xs" />
+            </button>
+          </nav>
+        )}
 
       </div>
     </div>
