@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { FaDice, FaLock, FaCopy, FaTrophy, FaMedal } from 'react-icons/fa6';
+import { useCallback, useEffect, useState } from 'react';
+import { FaCopy, FaDice, FaLock, FaMedal, FaTrophy, FaUserGroup, FaXTwitter, FaCheck } from 'react-icons/fa6';
 import { selectWinners, type DrawResult } from '@/lib/fairDraw';
 import { saveDraw, type DrawStatusResult } from '@/lib/api';
 
@@ -13,16 +13,10 @@ interface Props {
 
 function ParticipantList({ participants }: { participants: string[] }) {
   return (
-    <div className="glass-card p-4 mb-6">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-text-muted">Participants</h3>
-        <span className="text-xs px-2 py-0.5 rounded-full bg-teal/20 text-teal-light">
-          {participants.length} loaded
-        </span>
-      </div>
-      <div className="max-h-[200px] overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5">
-        {participants.map((p) => (
-          <span key={p} className="text-xs text-text-muted truncate px-2 py-1 rounded bg-white/5">
+    <div className="h-48 overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none">
+      <div className="flex flex-wrap gap-2">
+        {participants.map((p, i) => (
+          <span key={i} className="text-xs text-slate-600 dark:text-white/50 truncate px-2 py-1 rounded-lg bg-slate-50 dark:bg-white/[0.04] border border-slate-100 dark:border-white/[0.02]">
             @{p}
           </span>
         ))}
@@ -48,11 +42,11 @@ function SlotDisplay({ participants, isRolling }: { participants: string[]; isRo
   if (!isRolling) return null;
 
   return (
-    <div className="glass-card p-6 mb-6 text-center">
-      <p className="text-text-muted text-sm mb-3 flex items-center justify-center gap-2">
-        <FaDice className="animate-spin" /> Rolling…
+    <div className="flex flex-col h-32 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none relative mb-6">
+      <p className="text-slate-500 dark:text-white/40 text-sm mb-3 flex items-center justify-center gap-2">
+        <FaDice className="animate-spin text-teal dark:text-teal-light" /> Rolling…
       </p>
-      <div className="text-2xl font-bold text-teal-light animate-pulse-glow inline-block px-6 py-3 rounded-xl">
+      <div className="text-2xl font-bold text-teal dark:text-teal-light animate-subtle-glow">
         @{displayName}
       </div>
     </div>
@@ -62,27 +56,33 @@ function SlotDisplay({ participants, isRolling }: { participants: string[]; isRo
 function WinnerDisplay({ winners }: { winners: DrawResult }) {
   return (
     <div className="space-y-4 mb-6">
-      <div className="glass-card p-5">
-        <h3 className="font-semibold text-text-bright mb-3 flex items-center gap-2">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none">
+        <h3 className="mb-3 text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
           <FaTrophy className="text-yellow-400" /> Primary Winners
         </h3>
         <div className="flex flex-wrap gap-2">
-          {winners.primary.map((w) => (
-            <span key={w} className="px-3 py-1.5 rounded-lg bg-teal/15 text-teal-light text-sm font-medium border border-teal/30">
-              @{w}
+          {winners.primary.map((w, i) => (
+            <span
+              key={w}
+              className="px-3 py-1.5 rounded-lg bg-teal/10 text-teal dark:text-teal-light text-sm font-medium border border-teal/25"
+            >
+              {i + 1}. @{w}
             </span>
           ))}
         </div>
       </div>
       {winners.secondary.length > 0 && (
-        <div className="glass-card p-5">
-          <h3 className="font-semibold text-text-muted mb-3 flex items-center gap-2">
-            <FaMedal className="text-gray-400" /> Secondary (Backup) Winners
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none">
+          <h3 className="mb-3 text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+            <FaMedal className="text-slate-400 dark:text-slate-500" /> Secondary (Backup) Winners
           </h3>
           <div className="flex flex-wrap gap-2">
-            {winners.secondary.map((w) => (
-              <span key={w} className="px-3 py-1.5 rounded-lg bg-white/5 text-text-muted text-sm border border-white/10">
-                @{w}
+            {winners.secondary.map((w, i) => (
+              <span
+                key={w}
+                className="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-600 dark:bg-white/[0.04] dark:text-white/50 text-sm border border-slate-200 dark:border-white/10"
+              >
+                {i + 1}. @{w}
               </span>
             ))}
           </div>
@@ -101,8 +101,15 @@ export default function ActiveSession({ drawId, data, onFinalized }: Props) {
   const [hostUsername, setHostUsername] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
 
   const maxWinners = participants.length;
+
+  const copyUrl = () => {
+    navigator.clipboard.writeText(drawId);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleRoll = useCallback(() => {
     if (primaryCount + secondaryCount > maxWinners) {
@@ -149,72 +156,103 @@ export default function ActiveSession({ drawId, data, onFinalized }: Props) {
   }
 
   return (
-    <div className="animate-fade-in">
-      <div className="flex items-center gap-3 mb-6">
-        <h1 className="text-2xl font-bold text-text-bright">Draw Session</h1>
-        <button
-          onClick={() => navigator.clipboard.writeText(drawId)}
-          className="text-xs px-2 py-1 rounded bg-white/5 text-text-muted hover:text-teal-light transition-colors flex items-center gap-1"
-          title="Copy Draw ID"
-        >
-          {drawId.slice(0, 8)}… <FaCopy />
-        </button>
-      </div>
-
-      <div className="flex flex-wrap gap-4 mb-6 text-sm text-text-muted">
-        <span>Tweet: <span className="text-text-primary">{data.tweetId}</span></span>
-        <span>Mode: <span className="text-teal-light capitalize">{data.mode}</span></span>
-      </div>
-
-      <ParticipantList participants={participants} />
-      <SlotDisplay participants={participants} isRolling={isRolling} />
-
-      {!winners && !isRolling && (
-        <div className="glass-card p-6 mb-6">
-          <h3 className="font-medium text-text-bright mb-4">Winner Configuration</h3>
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-xs text-text-muted mb-1">Primary Winners</label>
-              <input
-                type="number" min={1} max={maxWinners} value={primaryCount}
-                onChange={(e) => setPrimaryCount(Math.max(1, +e.target.value))}
-                className="w-full bg-white/5 border border-white/10 focus:border-teal rounded-xl px-3 py-2 text-sm outline-none transition-colors"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-text-muted mb-1">Secondary (Backup)</label>
-              <input
-                type="number" min={0} max={maxWinners} value={secondaryCount}
-                onChange={(e) => setSecondaryCount(Math.max(0, +e.target.value))}
-                className="w-full bg-white/5 border border-white/10 focus:border-teal rounded-xl px-3 py-2 text-sm outline-none transition-colors"
-              />
-            </div>
-          </div>
-          <button onClick={handleRoll} disabled={isRolling} className="btn-teal w-full text-lg py-4 flex items-center justify-center gap-2">
-            <FaDice /> Roll Fair Winners
-          </button>
-        </div>
-      )}
-
-      {winners && !isRolling && (
-        <>
-          <WinnerDisplay winners={winners} />
-          <div className="glass-card p-6 mb-6">
-            <label className="block text-sm text-text-muted mb-2">Host Username (required)</label>
-            <input
-              type="text" value={hostUsername}
-              onChange={(e) => setHostUsername(e.target.value)}
-              placeholder="@your_username"
-              className="w-full bg-white/5 border border-white/10 focus:border-teal rounded-xl px-4 py-3 text-sm outline-none transition-colors mb-4 placeholder:text-text-muted/40"
-            />
-            <button onClick={handleFinalize} disabled={saving || !hostUsername.trim()} className="btn-teal w-full flex items-center justify-center gap-2">
-              <FaLock /> {saving ? 'Saving…' : 'Finalize & Lock to Database'}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-fade-in-up">
+      {/* Left: Metadata & Participants */}
+      <div className="lg:col-span-4 space-y-6">
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <FaXTwitter /> Draw Session
+            </h2>
+            <button
+              onClick={copyUrl}
+              className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-500 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-white/50 hover:border-teal/30 hover:text-teal dark:hover:text-teal-light transition-colors"
+              title="Copy Draw ID"
+            >
+              {drawId.slice(0, 8)}… {copied ? <FaCheck className="text-teal" /> : <FaCopy />}
             </button>
           </div>
-        </>
-      )}
+          <div className="space-y-3">
+            <div>
+              <span className="text-xs text-slate-500 dark:text-white/40 mb-1 block uppercase tracking-wider">Target Tweet</span>
+              <a href={`https://x.com/i/status/${data.tweetId}`} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-teal hover:underline break-all">
+                {data.tweetId}
+              </a>
+            </div>
+            <div>
+              <span className="text-xs text-slate-500 dark:text-white/40 mb-1 block uppercase tracking-wider">Mode</span>
+              <span className="text-sm font-medium capitalize text-slate-700 dark:text-white/70">{data.mode}</span>
+            </div>
+          </div>
+        </div>
 
-      {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none">
+          <h3 className="mb-3 flex items-center justify-between text-sm font-semibold text-slate-900 dark:text-white">
+            <span className="flex items-center gap-2"><FaUserGroup /> Eligible Entries</span>
+            <span className="text-xs px-2.5 py-1 rounded-full bg-teal/15 text-teal font-medium dark:text-teal-light">
+              {participants.length}
+            </span>
+          </h3>
+          <ParticipantList participants={participants} />
+        </div>
+      </div>
+
+      {/* Right: Roll Controller */}
+      <div className="lg:col-span-8">
+        <SlotDisplay participants={participants} isRolling={isRolling} />
+
+        {!winners && !isRolling && (
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none">
+            <h3 className="mb-4 text-sm font-semibold text-slate-900 dark:text-white border-b border-slate-100 pb-3 dark:border-white/[0.06]">
+              Winner Configuration
+            </h3>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm text-slate-600 dark:text-white/50 mb-1.5 font-medium">Primary Winners</label>
+                <input
+                  type="number" min={1} max={maxWinners} value={primaryCount}
+                  onChange={(e) => setPrimaryCount(Math.max(1, +e.target.value))}
+                  className="w-full bg-white border border-slate-200 focus:border-teal rounded-xl px-4 py-3 text-sm outline-none transition-colors text-slate-900 dark:bg-white/[0.03] dark:border-white/[0.08] dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-slate-600 dark:text-white/50 mb-1.5 font-medium">Secondary (Backup)</label>
+                <input
+                  type="number" min={0} max={maxWinners} value={secondaryCount}
+                  onChange={(e) => setSecondaryCount(Math.max(0, +e.target.value))}
+                  className="w-full bg-white border border-slate-200 focus:border-teal rounded-xl px-4 py-3 text-sm outline-none transition-colors text-slate-900 dark:bg-white/[0.03] dark:border-white/[0.08] dark:text-white"
+                />
+              </div>
+            </div>
+            <button onClick={handleRoll} disabled={isRolling || participants.length === 0} className="rounded-xl bg-teal w-full text-lg py-4 text-white font-semibold shadow-lg shadow-teal/20 hover:bg-teal-light hover:shadow-teal-light/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              <FaDice /> Roll Fair Winners
+            </button>
+          </div>
+        )}
+
+        {winners && !isRolling && (
+          <>
+            <WinnerDisplay winners={winners} />
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none">
+              <h3 className="mb-4 text-sm font-semibold text-slate-900 dark:text-white border-b border-slate-100 pb-3 dark:border-white/[0.06]">
+                Finalize Details
+              </h3>
+              <label className="block text-sm text-slate-600 dark:text-white/50 mb-1.5 font-medium">Host Username (required)</label>
+              <input
+                type="text" value={hostUsername}
+                onChange={(e) => setHostUsername(e.target.value)}
+                placeholder="@your_username"
+                className="w-full bg-white border border-slate-200 focus:border-teal rounded-xl px-4 py-3 text-sm outline-none transition-colors text-slate-900 dark:bg-white/[0.03] dark:border-white/[0.08] dark:text-white mb-6 placeholder:text-slate-400 dark:placeholder:text-white/25"
+              />
+              <button onClick={handleFinalize} disabled={saving || !hostUsername.trim()} className="rounded-xl bg-teal w-full text-lg py-4 text-white font-semibold shadow-lg shadow-teal/20 hover:bg-teal-light hover:shadow-teal-light/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                <FaLock /> {saving ? 'Saving…' : 'Finalize & Lock to Database'}
+              </button>
+            </div>
+          </>
+        )}
+
+        {error && <p className="mt-4 text-sm text-red-500 dark:text-red-400">{error}</p>}
+      </div>
     </div>
   );
 }

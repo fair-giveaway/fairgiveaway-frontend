@@ -54,14 +54,22 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} dark`} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Inline script to prevent FOUC on theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light'){document.documentElement.classList.remove('dark')}else if(!t&&!window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.remove('dark')}}catch(e){}})()`,
+          }}
+        />
       </head>
-      <body className="min-h-full flex flex-col bg-bg-deep text-text-primary font-sans">
+      <body className="min-h-screen flex flex-col font-sans antialiased bg-slate-50 text-slate-900 dark:bg-[#0a0a0f] dark:text-white transition-colors duration-300">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
