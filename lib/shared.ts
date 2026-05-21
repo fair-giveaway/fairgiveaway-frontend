@@ -5,7 +5,8 @@ export const siteConfig = {
   ogImage: '/og-image.png',
   tagline: 'Trust Built into the Code',
   links: {
-    github: 'https://github.com/isaacnewton123/fairgiveaway-frontend',
-    backend: 'https://github.com/isaacnewton123/fairgiveaway-backend',
+    twitter: 'https://x.com/isaac_newton252',
+    github: 'https://github.com/fair-giveaway/fairgiveaway-frontend',
+    backend: 'https://github.com/fair-giveaway/fairgiveaway-backend',
   },
 };

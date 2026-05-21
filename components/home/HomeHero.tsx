@@ -1,44 +1,40 @@
 'use client';
 
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { siteConfig } from '@/lib/shared';
+import Link from 'next/link';
+import { FaShieldHalved } from 'react-icons/fa6';
 
 export function HomeHero() {
-  const router = useRouter();
-  
   return (
-    <section className="relative flex min-h-[calc(100vh-57px)] flex-col items-center justify-center px-6 py-12 text-center animate-fade-in-up">
-      <div className="mb-6 flex justify-center animate-float">
-        <Image src="/logo.png" alt="FairGiveaway" width={80} height={80} className="rounded-2xl shadow-xl shadow-teal/10 dark:shadow-teal/20" priority />
-      </div>
-      <h1 className="mx-auto max-w-3xl font-mono text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent mb-4 pb-1">
-        FairGiveaway.online
-      </h1>
-      <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg dark:text-white/60 mb-8">
-        {siteConfig.description}
-      </p>
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-        <button
-          onClick={() => router.push('/platforms')}
-          className="rounded-xl bg-teal px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal/20 transition-all hover:bg-teal-light hover:shadow-teal-light/30"
+    <section className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center overflow-hidden">
+      {/* Background glow effects */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-[100%] bg-gradient-glow blur-[100px] pointer-events-none" />
+      
+      <div className="neo-container relative z-10 text-center flex flex-col items-center">
+        <div 
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-borderSubtle bg-bgFloat backdrop-blur-md mb-8 animate-fade-in-up"
         >
-          Start a Draw →
-        </button>
-        <button
-          onClick={() => router.push('/verify')}
-          className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 dark:border-white/[0.12] dark:bg-white/[0.04] dark:text-white dark:hover:border-white/20 dark:hover:bg-white/[0.08]"
-        >
-          Verify a Draw
-        </button>
-        <a
-          href={siteConfig.links.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 dark:border-white/[0.12] dark:bg-white/[0.04] dark:text-white dark:hover:border-white/20 dark:hover:bg-white/[0.08]"
-        >
-          GitHub
-        </a>
+          <FaShieldHalved className="text-accentPrimary" />
+          <span className="text-sm font-medium text-textSecondary tracking-wide">100% Provably Fair</span>
+        </div>
+        
+        <h1 className="neo-title mb-8 max-w-4xl mx-auto animate-fade-in-up stagger-1">
+          Immutable giveaways.
+          <br className="hidden md:block" />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accentPrimary to-teal-400"> Transparent results.</span>
+        </h1>
+        
+        <p className="neo-subtitle mb-12 max-w-2xl mx-auto animate-fade-in-up stagger-2">
+          Run your giveaways with cryptographically verifiable randomness. Results are permanently recorded and publicly verifiable by anyone.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full sm:w-auto animate-fade-in-up stagger-3">
+          <Link href="/platforms" className="neo-button-primary w-full sm:w-auto h-14 px-8 text-lg">
+            Start a Draw
+          </Link>
+          <Link href="/verify" className="neo-button-secondary w-full sm:w-auto h-14 px-8 text-lg">
+            Verify Results
+          </Link>
+        </div>
       </div>
     </section>
   );

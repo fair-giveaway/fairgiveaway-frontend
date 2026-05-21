@@ -1,182 +1,76 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
-import { SiKofi } from 'react-icons/si';
-import { FaGift, FaHeart } from 'react-icons/fa6';
-import type { IconType } from 'react-icons';
+import { FaGithub, FaXTwitter, FaGlobe } from 'react-icons/fa6';
+import { siteConfig } from '@/lib/shared';
 
-interface FooterLink {
-  label: string;
-  href: string;
-  external?: boolean;
-}
+export function Footer() {
+  const currentYear = new Date().getFullYear();
 
-const footerColumns: { title: string; links: FooterLink[] }[] = [
-  {
-    title: 'Product',
-    links: [
-      { label: 'Start a Draw', href: '/platforms' },
-      { label: 'Verify Results', href: '/verify' },
-      { label: 'Draw History', href: '/history' },
-      { label: 'Leaderboard', href: '/leaderboard' },
-    ],
-  },
-  {
-    title: 'Platforms',
-    links: [
-      { label: 'X / Twitter', href: '/platforms/x' },
-      { label: 'Facebook', href: '/platforms/facebook' },
-      { label: 'Instagram', href: '/platforms/instagram' },
-      { label: 'TikTok', href: '/platforms/tiktok' },
-      { label: 'CSV Import', href: '/platforms/csv' },
-    ],
-  },
-  {
-    title: 'Community',
-    links: [
-      { label: 'GitHub', href: 'https://github.com/isaacnewton123/FairGiveaway', external: true },
-      { label: 'Report Issue', href: 'https://github.com/isaacnewton123/FairGiveaway/issues', external: true },
-    ],
-  },
-  {
-    title: 'Connect',
-    links: [
-      { label: 'X / Twitter', href: 'https://x.com/isaac_newton252', external: true },
-      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/hanif-maulana-210b4721b/', external: true },
-      { label: 'Instagram', href: 'https://www.instagram.com/hanifmaulana2/', external: true },
-      { label: 'Facebook', href: 'https://www.facebook.com/hanif.maulana.108/', external: true },
-    ],
-  },
-];
-
-const supportLinks: { icon: IconType; label: string; emoji: string; href: string }[] = [
-  { icon: SiKofi, label: 'Ko-fi', emoji: '☕', href: 'https://ko-fi.com/isaacnewton1' },
-  { icon: FaGift, label: 'Trakteer', emoji: '💜', href: 'https://trakteer.id/isaacnewton1/link' },
-  { icon: FaHeart, label: 'Sponsors', emoji: '❤️', href: 'https://github.com/sponsors/isaacnewton123' },
-];
-
-export default function Footer() {
   return (
-    <footer className="relative border-t border-slate-200 px-6 pb-8 pt-16 dark:border-white/[0.06]">
-      {/* Gradient accent line */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent"
-        aria-hidden="true"
-      />
-
-      <div className="mx-auto max-w-6xl">
-        {/* Top: brand + columns */}
-        <div className="grid grid-cols-2 gap-10 md:grid-cols-6">
-          {/* Brand */}
-          <div className="col-span-2 flex flex-col gap-5">
-            <Link href="/" className="flex items-center gap-3" aria-label="Home">
-              <Image
-                src="/logo.png"
-                alt="FairGiveaway logo"
-                width={32}
-                height={32}
-                className="rounded-lg"
-              />
-              <span className="text-sm font-semibold text-slate-800 dark:text-white/80">
-                <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
-                  Fair
-                </span>
-                Giveaway
+    <footer className="border-t border-borderSubtle bg-bgBase mt-24 relative overflow-hidden">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-glow opacity-30 pointer-events-none" />
+      
+      <div className="neo-container py-16 lg:py-24 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+          <div className="lg:col-span-1">
+            <Link href="/" className="inline-flex items-center gap-2 mb-6">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden transition-transform group-hover:scale-105">
+                <Image src="/logo.png" alt="FairGiveaway Logo" width={32} height={32} className="object-cover" />
+              </div>
+              <span className="text-xl font-bold tracking-tight text-textPrimary">
+                FairGiveaway
               </span>
             </Link>
-
-            <p className="max-w-xs text-sm leading-relaxed text-slate-500 dark:text-white/35">
-              Provably fair giveaway winner selection powered by Web Crypto API.
-              Zero manipulation, 100% verifiable.
+            <p className="text-textSecondary text-sm leading-relaxed mb-6">
+              Provably fair, immutable giveaway platform. Transparent results for everyone.
             </p>
-
-            <div className="flex flex-col gap-2.5">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-white/20">
-                Support the project
-              </span>
-              <div className="flex items-center gap-2.5">
-                {supportLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-medium text-slate-600 transition-all duration-300 hover:border-teal/25 hover:bg-teal-light/5 hover:text-teal-dark dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white/45 dark:hover:bg-teal/10 dark:hover:text-teal-light"
-                    aria-label={`${link.label} (opens in new tab)`}
-                  >
-                    {link.emoji} {link.label}
-                  </a>
-                ))}
-              </div>
+            <div className="flex gap-4">
+              <a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer" className="text-textMuted hover:text-textPrimary transition-colors" aria-label="GitHub">
+                <FaGithub className="text-xl" />
+              </a>
+              <a href="https://x.com/isaac_newton252" target="_blank" rel="noopener noreferrer" className="text-textMuted hover:text-textPrimary transition-colors" aria-label="X (Twitter)">
+                <FaXTwitter className="text-xl" />
+              </a>
+              <a href="https://eslint-ai-guardrails.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-textMuted hover:text-textPrimary transition-colors" aria-label="Website">
+                <FaGlobe className="text-xl" />
+              </a>
             </div>
           </div>
-
-          {/* Link columns */}
-          {footerColumns.map((col) => (
-            <div key={col.title} className="flex flex-col gap-3">
-              <h3 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-white/40">
-                {col.title}
-              </h3>
-              <ul className="flex flex-col gap-2" role="list">
-                {col.links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      {...(link.external
-                        ? { target: '_blank', rel: 'noopener noreferrer' }
-                        : {})}
-                      className="text-sm text-slate-500 transition-colors hover:text-slate-900 dark:text-white/30 dark:hover:text-white/65"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          
+          <div>
+            <h3 className="neo-label-sm mb-5">Platform</h3>
+            <ul className="space-y-4">
+              <li><Link href="/platforms" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Start a Draw</Link></li>
+              <li><Link href="/verify" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Verify Results</Link></li>
+              <li><Link href="/history" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Draw History</Link></li>
+              <li><Link href="/leaderboard" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Leaderboards</Link></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="neo-label-sm mb-5">Resources</h3>
+            <ul className="space-y-4">
+              <li><a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Frontend Repository</a></li>
+              <li><a href={siteConfig.links.backend} target="_blank" rel="noopener noreferrer" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Backend Repository</a></li>
+              <li><Link href="/#faq" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">FAQ</Link></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="neo-label-sm mb-5">Legal</h3>
+            <ul className="space-y-4">
+              <li><Link href="/terms" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Terms of Service</Link></li>
+              <li><Link href="/privacy" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Privacy Policy</Link></li>
+            </ul>
+          </div>
         </div>
-
-        {/* Bottom bar */}
-        <div className="mt-14 border-t border-slate-200 pt-6 dark:border-white/[0.04]">
-          <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-            <p className="text-xs text-slate-400 dark:text-white/20">
-              MIT License · © {new Date().getFullYear()} FairGiveaway.online
-            </p>
-            <p className="text-xs text-slate-400 dark:text-white/20">
-              Built by{' '}
-              <a
-                href="https://github.com/isaacnewton123"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-500 transition-colors hover:text-slate-800 dark:text-white/35 dark:hover:text-white/60"
-              >
-                Hanif Maulana
-              </a>
-            </p>
-          </div>
-
-          {/* Social share */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-4 sm:mt-6 sm:justify-start">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-white/30">
-              Share:
-            </span>
-            {[
-              { label: 'X / Twitter', href: 'https://x.com/intent/tweet?text=Check%20out%20FairGiveaway.online!&url=https://fairgiveaway.online' },
-              { label: 'LinkedIn', href: 'https://www.linkedin.com/sharing/share-offsite/?url=https://fairgiveaway.online' },
-              { label: 'Facebook', href: 'https://www.facebook.com/sharer/sharer.php?u=https://fairgiveaway.online' },
-            ].map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-slate-500 transition-colors hover:text-teal dark:text-white/40 dark:hover:text-teal-light"
-                aria-label={`Share on ${s.label}`}
-              >
-                {s.label}
-              </a>
-            ))}
+        
+        <div className="mt-16 pt-8 border-t border-borderSubtle flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-textMuted">
+            &copy; {currentYear} FairGiveaway. Open source under MIT License.
+          </p>
+          <div className="flex items-center gap-2 text-sm text-textMuted">
+            Built by Isaac Newton
           </div>
         </div>
       </div>

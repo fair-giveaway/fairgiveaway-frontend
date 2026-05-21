@@ -1,85 +1,70 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { FaClockRotateLeft } from 'react-icons/fa6';
-import { getHistory, type GiveawayDoc } from '@/lib/api';
+import { FaClockRotateLeft, FaXTwitter, FaFacebook, FaInstagram, FaTiktok, FaFileCsv } from 'react-icons/fa6';
+import { siteConfig } from '@/lib/shared';
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
-}
+const PLATFORMS = [
+  { id: 'x', name: 'X / Twitter', icon: FaXTwitter, active: true },
+  { id: 'facebook', name: 'Facebook', icon: FaFacebook, active: false },
+  { id: 'instagram', name: 'Instagram', icon: FaInstagram, active: false },
+  { id: 'tiktok', name: 'TikTok', icon: FaTiktok, active: false },
+  { id: 'csv', name: 'CSV Import', icon: FaFileCsv, active: false },
+];
 
-function ShimmerCards() {
+export default function HistoryHubPage() {
   return (
-    <div className="space-y-4">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="rounded-xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-white/[0.02] h-24 animate-shimmer" />
-      ))}
-    </div>
-  );
-}
+    <div className="min-h-screen pt-32 pb-24">
+      <div className="neo-container max-w-5xl animate-fade-in-up">
+        
+        <header className="mb-16 text-center">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-bgElevated border border-borderStrong text-3xl text-textPrimary mb-6 shadow-sm">
+            <FaClockRotateLeft />
+          </div>
+          <h1 className="neo-title mb-6">
+            Draw History
+          </h1>
+          <p className="neo-subtitle max-w-2xl mx-auto">
+            Select a platform to browse the immutable ledger of past giveaway results.
+          </p>
+        </header>
 
-export default function HistoryPage() {
-  const [history, setHistory] = useState<GiveawayDoc[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {PLATFORMS.map((platform, i) => {
+            const Icon = platform.icon;
+            
+            if (!platform.active) {
+              return (
+                <div 
+                  key={platform.id} 
+                  className="neo-card p-8 flex flex-col items-center justify-center text-center opacity-60 grayscale cursor-not-allowed"
+                >
+                  <Icon className="text-4xl text-textMuted mb-4" />
+                  <h3 className="text-lg font-bold text-textPrimary mb-2">{platform.name}</h3>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-textMuted bg-borderSubtle px-3 py-1 rounded-full">
+                    Coming Soon
+                  </span>
+                </div>
+              );
+            }
 
-  useEffect(() => {
-    document.title = 'Draw History | FairGiveaway.online';
-    getHistory()
-      .then(setHistory)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load.'))
-      .finally(() => setLoading(false));
-  }, []);
-
-  return (
-    <div className="animate-fade-in-up">
-      <header className="mb-8">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-violet-500 dark:text-violet-400/80 flex items-center gap-2">
-          <FaClockRotateLeft /> Draw History
-        </p>
-        <h1 className="pb-1 text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
-          Past X Giveaways
-        </h1>
-      </header>
-
-      {loading && <ShimmerCards />}
-
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 dark:border-red-500/20 dark:bg-red-500/5 p-6 text-center">
-          <p className="text-red-500 dark:text-red-400">{error}</p>
+            return (
+              <Link key={platform.id} href={`/history/${platform.id}`} className="group block">
+                <div 
+                  className="neo-card p-8 flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:border-accentPrimary/50"
+                  style={{ animationDelay: `${0.1 * i}s` }}
+                >
+                  <div className="h-16 w-16 rounded-2xl bg-bgBase border border-borderSubtle flex items-center justify-center mb-6 text-textSecondary transition-colors group-hover:text-accentPrimary group-hover:bg-accentPrimary/5">
+                    <Icon className="text-3xl" />
+                  </div>
+                  <h3 className="text-lg font-bold text-textPrimary mb-2">{platform.name}</h3>
+                  <span className="text-sm text-textSecondary">Browse Records →</span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
-      )}
 
-      {!loading && !error && history.length === 0 && (
-        <div className="rounded-xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-white/[0.02] p-8 text-center">
-          <p className="text-slate-500 dark:text-white/45">No draws recorded yet. Be the first!</p>
-        </div>
-      )}
-
-      <div className="space-y-3">
-        {history.map((g, i) => (
-          <Link key={g._id} href={`/x/draw/${g._id}`}>
-            <div 
-              className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none dark:hover:border-white/[0.15] dark:hover:bg-white/[0.05] cursor-pointer"
-              style={{ animationDelay: `${0.05 * i}s` }}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-semibold text-slate-900 dark:text-white">@{g.hostUsername}</span>
-                <span className="text-xs text-slate-400 dark:text-white/30">{formatDate(g.createdAt)}</span>
-              </div>
-              <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-white/40">
-                <span className="font-mono bg-slate-100 dark:bg-white/[0.04] px-2 py-0.5 rounded text-slate-600 dark:text-white/50">ID: {g._id.slice(0, 8)}…</span>
-                <span className="capitalize text-teal dark:text-teal-light font-medium bg-teal/5 dark:bg-teal/10 px-2 py-0.5 rounded">{g.mode}</span>
-                <span className="flex items-center gap-1"><span className="text-slate-700 dark:text-white/70 font-medium">{g.totalParticipants}</span> participants</span>
-                <span className="flex items-center gap-1"><span className="text-slate-700 dark:text-white/70 font-medium">{g.winners.length}</span> winner{g.winners.length !== 1 ? 's' : ''}</span>
-              </div>
-            </div>
-          </Link>
-        ))}
       </div>
     </div>
   );

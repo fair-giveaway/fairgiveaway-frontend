@@ -1,68 +1,24 @@
 'use client';
 
+import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import { FaMoon, FaSun } from 'react-icons/fa6';
 
-export default function ThemeToggle() {
-  const [dark, setDark] = useState(true);
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    const stored = localStorage.getItem('theme');
-    const prefersDark =
-      stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    setDark(prefersDark);
-    document.documentElement.classList.toggle('dark', prefersDark);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
-  function toggle() {
-    const next = !dark;
-    setDark(next);
-    document.documentElement.classList.toggle('dark', next);
-    localStorage.setItem('theme', next ? 'dark' : 'light');
-  }
+  if (!mounted) return <div className="w-9 h-9" />;
 
   return (
     <button
-      onClick={toggle}
-      className="relative rounded-lg p-2 text-slate-500 transition-colors
-                 hover:bg-slate-100 hover:text-slate-700
-                 dark:text-white/50 dark:hover:bg-white/[0.06] dark:hover:text-white"
-      aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      className="flex h-9 w-9 items-center justify-center rounded-full text-textSecondary hover:bg-borderSubtle hover:text-textPrimary transition-all duration-300"
+      aria-label="Toggle theme"
     >
-      {/* Sun icon */}
-      <svg
-        className={`h-[18px] w-[18px] transition-all duration-300
-                    ${dark ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'}`}
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-        style={{ position: dark ? 'absolute' : 'relative', inset: dark ? '8px' : undefined }}
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-        />
-      </svg>
-
-      {/* Moon icon */}
-      <svg
-        className={`h-[18px] w-[18px] transition-all duration-300
-                    ${dark ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-0 opacity-0'}`}
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-        style={{ position: !dark ? 'absolute' : 'relative', inset: !dark ? '8px' : undefined }}
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
-        />
-      </svg>
+      {theme === 'dark' ? <FaSun className="text-[1.1rem]" /> : <FaMoon className="text-[1.1rem]" />}
     </button>
   );
 }

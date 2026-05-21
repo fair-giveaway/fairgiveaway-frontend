@@ -1,66 +1,69 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { PLATFORMS } from '@/lib/home-data';
-import { FaXTwitter, FaFacebook, FaInstagram, FaTiktok, FaFileCsv } from 'react-icons/fa6';
+import Link from 'next/link';
+import { FaXTwitter, FaFacebook, FaInstagram, FaTiktok, FaFileCsv, FaCubes } from 'react-icons/fa6';
 
-const ICONS: Record<string, any> = {
-  'x': FaXTwitter,
-  'facebook': FaFacebook,
-  'instagram': FaInstagram,
-  'tiktok': FaTiktok,
-  'csv': FaFileCsv,
-};
+const PLATFORMS = [
+  { id: 'x', name: 'X / Twitter', icon: FaXTwitter, active: true },
+  { id: 'facebook', name: 'Facebook', icon: FaFacebook, active: false },
+  { id: 'instagram', name: 'Instagram', icon: FaInstagram, active: false },
+  { id: 'tiktok', name: 'TikTok', icon: FaTiktok, active: false },
+  { id: 'csv', name: 'CSV Import', icon: FaFileCsv, active: false },
+];
 
-export default function PlatformsPage() {
-  const router = useRouter();
-
+export default function PlatformsHubPage() {
   return (
-    <div className="min-h-screen py-24 px-6">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-16 text-center animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-violet-500 dark:text-violet-400/80">
-            Platforms
-          </p>
-          <h1 className="mb-5 text-3xl font-bold tracking-tight sm:text-4xl text-slate-900 dark:text-white">
-            Choose a Platform
+    <div className="min-h-screen pt-32 pb-24">
+      <div className="neo-container max-w-5xl animate-fade-in-up">
+        
+        <header className="mb-16 text-center">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-bgElevated border border-borderStrong text-3xl text-textPrimary mb-6 shadow-sm">
+            <FaCubes />
+          </div>
+          <h1 className="neo-title mb-6">
+            Select Platform
           </h1>
-          <p className="mx-auto max-w-2xl leading-relaxed text-slate-500 dark:text-white/45">
-            Select the platform where you hosted your giveaway to get started. More platforms are coming soon.
+          <p className="neo-subtitle max-w-2xl mx-auto">
+            Choose a platform to initialize a provably fair draw session.
           </p>
-        </div>
+        </header>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {PLATFORMS.map((p, i) => {
-            const Icon = ICONS[p.id];
-            return (
-              <div
-                key={p.id}
-                onClick={() => p.active && router.push(`/platforms/${p.id}`)}
-                className={`group relative rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none animate-fade-in-up
-                  ${p.active
-                    ? 'cursor-pointer hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:hover:border-white/[0.15] dark:hover:bg-white/[0.05]'
-                    : 'opacity-60 grayscale'
-                  }`}
-                style={{ animationDelay: `${0.15 + i * 0.05}s` }}
-              >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-violet-500/10 text-2xl text-violet-500">
-                  {Icon && <Icon />}
-                </div>
-                <h3 className="mb-2 font-semibold text-slate-900 dark:text-white">{p.name}</h3>
-                {p.active ? (
-                  <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-md bg-teal/10 text-teal dark:text-teal-light border border-teal/20">
-                    Active
-                  </span>
-                ) : (
-                  <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-md bg-slate-100 text-slate-500 border border-slate-200 dark:bg-white/[0.06] dark:text-white/40 dark:border-white/10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {PLATFORMS.map((platform, i) => {
+            const Icon = platform.icon;
+            
+            if (!platform.active) {
+              return (
+                <div 
+                  key={platform.id} 
+                  className="neo-card p-8 flex flex-col items-center justify-center text-center opacity-60 grayscale cursor-not-allowed"
+                >
+                  <Icon className="text-4xl text-textMuted mb-4" />
+                  <h3 className="text-lg font-bold text-textPrimary mb-2">{platform.name}</h3>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-textMuted bg-borderSubtle px-3 py-1 rounded-full">
                     Coming Soon
                   </span>
-                )}
-              </div>
+                </div>
+              );
+            }
+
+            return (
+              <Link key={platform.id} href={`/platforms/${platform.id}`} className="group block">
+                <div 
+                  className="neo-card p-8 flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:border-accentPrimary/50"
+                  style={{ animationDelay: `${0.1 * i}s` }}
+                >
+                  <div className="h-16 w-16 rounded-2xl bg-bgBase border border-borderSubtle flex items-center justify-center mb-6 text-textSecondary transition-colors group-hover:text-accentPrimary group-hover:bg-accentPrimary/5">
+                    <Icon className="text-3xl" />
+                  </div>
+                  <h3 className="text-lg font-bold text-textPrimary mb-2">{platform.name}</h3>
+                  <span className="text-sm text-textSecondary">Start Draw →</span>
+                </div>
+              </Link>
             );
           })}
         </div>
+
       </div>
     </div>
   );

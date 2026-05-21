@@ -7,14 +7,14 @@ import FinalizedSession from '@/components/draw/FinalizedSession';
 
 function Skeleton() {
   return (
-    <div className="space-y-6 animate-fade-in-up">
+    <div className="space-y-6 animate-fade-in-up py-32 px-6 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-4 space-y-6">
-          <div className="rounded-xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-white/[0.02] h-48 animate-shimmer" />
-          <div className="rounded-xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-white/[0.02] h-64 animate-shimmer" />
+          <div className="neo-card h-48 animate-pulse-slow opacity-50 bg-bgElevated" />
+          <div className="neo-card h-64 animate-pulse-slow opacity-50 bg-bgElevated" />
         </div>
         <div className="lg:col-span-8">
-          <div className="rounded-xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-white/[0.02] h-96 animate-shimmer" />
+          <div className="neo-card h-96 animate-pulse-slow opacity-50 bg-bgElevated" />
         </div>
       </div>
     </div>
@@ -48,24 +48,32 @@ export default function DrawPage({ params }: { params: Promise<{ id: string }> }
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto rounded-xl border border-red-200 bg-red-50 dark:border-red-500/20 dark:bg-red-500/5 p-8 text-center animate-fade-in-up">
-        <p className="text-red-600 dark:text-red-400 text-lg font-semibold mb-2">⚠️ Error Loading Draw</p>
-        <p className="text-slate-600 dark:text-white/50">{error}</p>
+      <div className="py-32 px-6">
+        <div className="max-w-2xl mx-auto neo-card border-red-500/30 bg-red-500/5 p-12 text-center animate-fade-in-up">
+          <p className="text-red-500 text-xl font-bold mb-3">⚠️ Error Loading Draw</p>
+          <p className="text-textSecondary">{error}</p>
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="max-w-2xl mx-auto rounded-xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-white/[0.02] p-8 text-center animate-fade-in-up">
-        <p className="text-slate-600 dark:text-white/50 text-lg">Draw not found or expired.</p>
+      <div className="py-32 px-6">
+        <div className="max-w-2xl mx-auto neo-card p-12 text-center animate-fade-in-up">
+          <p className="text-textSecondary text-lg font-medium">Draw not found or expired.</p>
+        </div>
       </div>
     );
   }
 
-  if (data.status === 'finalized' && data.data) {
-    return <FinalizedSession data={data.data} drawId={id} />;
-  }
-
-  return <ActiveSession drawId={id} data={data} onFinalized={fetchStatus} />;
+  return (
+    <div className="py-32 px-6 max-w-7xl mx-auto">
+      {data.status === 'finalized' && data.data ? (
+        <FinalizedSession data={data.data} drawId={id} />
+      ) : (
+        <ActiveSession drawId={id} data={data} onFinalized={fetchStatus} />
+      )}
+    </div>
+  );
 }

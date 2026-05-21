@@ -1,96 +1,42 @@
-import Image from 'next/image';
+import { FaHeart, FaGithub } from 'react-icons/fa6';
 
-interface Contributor {
-  login: string;
-  avatar_url: string;
-  html_url: string;
-  contributions: number;
-}
-
-async function getContributors(): Promise<Contributor[]> {
-  try {
-    const [frontendRes, backendRes] = await Promise.all([
-      fetch('https://api.github.com/repos/isaacnewton123/fairgiveaway-frontend/contributors', {
-        next: { revalidate: 3600 },
-        headers: { 'User-Agent': 'fairgiveaway-frontend' }
-      }),
-      fetch('https://api.github.com/repos/isaacnewton123/fairgiveaway-backend/contributors', {
-        next: { revalidate: 3600 },
-        headers: { 'User-Agent': 'fairgiveaway-frontend' }
-      })
-    ]);
-
-    let frontendContributors: Contributor[] = [];
-    let backendContributors: Contributor[] = [];
-
-    if (frontendRes.ok) {
-      frontendContributors = await frontendRes.json();
-    }
-    if (backendRes.ok) {
-      backendContributors = await backendRes.json();
-    }
-
-    // Merge and remove duplicates, summing up contributions
-    const mergedMap = new Map<string, Contributor>();
-    
-    [...frontendContributors, ...backendContributors].forEach(c => {
-      if (mergedMap.has(c.login)) {
-        mergedMap.get(c.login)!.contributions += c.contributions;
-      } else {
-        mergedMap.set(c.login, { ...c });
-      }
-    });
-
-    // Sort by contributions descending
-    return Array.from(mergedMap.values()).sort((a, b) => b.contributions - a.contributions);
-
-  } catch (error) {
-    console.error('Failed to fetch contributors:', error);
-    return [];
-  }
-}
-
-export async function HomeContributors() {
-  const contributors = await getContributors();
-
-  if (!contributors || contributors.length === 0) {
-    return null;
-  }
-
+export function HomeContributors() {
   return (
-    <section className="relative border-t border-slate-200 px-6 py-24 dark:border-white/[0.06]" aria-labelledby="contributors-heading">
-      <div className="mx-auto max-w-4xl text-center">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-violet-500 dark:text-violet-400/80">
-          Community
-        </p>
-        <h2 id="contributors-heading" className="mb-14 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-          Contributors
-        </h2>
+    <section className="py-24 border-t border-borderSubtle bg-bgBase">
+      <div className="neo-container max-w-4xl">
+        <div className="text-center mb-16">
+          <h2 className="neo-label-sm mb-4">Sponsors</h2>
+          <h3 className="text-3xl md:text-4xl font-bold text-textPrimary">
+            Support the Project
+          </h3>
+          <p className="neo-subtitle max-w-2xl mx-auto mt-4">
+            FairGiveaway is an open-source project. If you find it useful, consider sponsoring the development.
+          </p>
+        </div>
 
-        <div className="flex flex-wrap justify-center gap-8">
-          {contributors.map((contributor) => (
-            <a
-              key={contributor.login}
-              href={contributor.html_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex flex-col items-center gap-3 transition-transform duration-300 hover:-translate-y-1"
-              aria-label={`View ${contributor.login}'s profile on GitHub`}
-            >
-              <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-slate-200 shadow-sm transition-colors group-hover:border-violet-500/50 dark:border-white/10 dark:shadow-none dark:group-hover:border-violet-400/80">
-                <Image
-                  src={contributor.avatar_url}
-                  alt={contributor.login}
-                  fill
-                  className="object-cover"
-                  sizes="64px"
-                />
-              </div>
-              <span className="text-sm font-medium text-slate-600 transition-colors group-hover:text-violet-600 dark:text-white/60 dark:group-hover:text-violet-300">
-                {contributor.login}
-              </span>
-            </a>
-          ))}
+        <div className="flex justify-center">
+          <a 
+            href="https://github.com/sponsors/isaacnewton123"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex flex-col items-center justify-center neo-card p-10 w-full max-w-[500px]"
+          >
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-bgBase border border-borderSubtle text-textPrimary mb-6 transition-colors group-hover:border-accentPrimary group-hover:bg-accentPrimary/5">
+              <FaHeart className="text-3xl transition-colors group-hover:text-accentPrimary" />
+            </div>
+            
+            <h4 className="text-xl font-bold text-textPrimary mb-2">
+              Become a Sponsor
+            </h4>
+            
+            <p className="text-textSecondary text-center text-sm mb-8 leading-relaxed">
+              Help maintain our infrastructure and fund the development of new features by sponsoring the project on GitHub.
+            </p>
+            
+            <div className="neo-button-primary w-full sm:w-auto text-sm">
+              <FaGithub className="mr-2 text-lg" /> Sponsor via GitHub
+            </div>
+          </a>
         </div>
       </div>
     </section>

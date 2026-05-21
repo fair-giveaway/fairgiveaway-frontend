@@ -1,84 +1,69 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { FaTrophy } from 'react-icons/fa6';
-import { getLeaderboard, type LeaderboardEntry } from '@/lib/api';
+import Link from 'next/link';
+import { FaTrophy, FaXTwitter, FaFacebook, FaInstagram, FaTiktok, FaFileCsv } from 'react-icons/fa6';
 
-function rankIcon(rank: number): string {
-  if (rank === 1) return '🥇';
-  if (rank === 2) return '🥈';
-  if (rank === 3) return '🥉';
-  return `${rank}`;
-}
+const PLATFORMS = [
+  { id: 'x', name: 'X / Twitter', icon: FaXTwitter, active: true },
+  { id: 'facebook', name: 'Facebook', icon: FaFacebook, active: false },
+  { id: 'instagram', name: 'Instagram', icon: FaInstagram, active: false },
+  { id: 'tiktok', name: 'TikTok', icon: FaTiktok, active: false },
+  { id: 'csv', name: 'CSV Import', icon: FaFileCsv, active: false },
+];
 
-function ShimmerCards() {
+export default function LeaderboardHubPage() {
   return (
-    <div className="space-y-3">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="rounded-xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-white/[0.02] h-20 animate-shimmer" />
-      ))}
-    </div>
-  );
-}
-
-export default function LeaderboardPage() {
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    document.title = 'Leaderboard | FairGiveaway.online';
-    getLeaderboard()
-      .then(setEntries)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load.'))
-      .finally(() => setLoading(false));
-  }, []);
-
-  return (
-    <div className="animate-fade-in-up">
-      <header className="mb-8">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-violet-500 dark:text-violet-400/80 flex items-center gap-2">
-          <FaTrophy /> Rankings
-        </p>
-        <h1 className="pb-1 text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
-          Top X Hosts
-        </h1>
-      </header>
-
-      {loading && <ShimmerCards />}
-
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 dark:border-red-500/20 dark:bg-red-500/5 p-6 text-center">
-          <p className="text-red-500 dark:text-red-400">{error}</p>
-        </div>
-      )}
-
-      {!loading && !error && entries.length === 0 && (
-        <div className="rounded-xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-white/[0.02] p-8 text-center">
-          <p className="text-slate-500 dark:text-white/45">No hosts on the leaderboard yet.</p>
-        </div>
-      )}
-
-      <div className="space-y-3">
-        {entries.map((entry, idx) => (
-          <div
-            key={entry._id}
-            className={`flex items-center gap-4 rounded-xl border bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 dark:bg-white/[0.02] dark:shadow-none
-              ${idx < 3 ? 'border-l-4 border-l-teal/60 border-y-slate-200 border-r-slate-200 dark:border-y-white/[0.08] dark:border-r-white/[0.08]' : 'border-slate-200 dark:border-white/[0.08]'}`}
-            style={{ animationDelay: `${0.05 * idx}s` }}
-          >
-            <span className={`text-2xl w-10 text-center shrink-0 ${idx > 2 ? 'text-slate-400 dark:text-white/20 font-bold text-lg' : ''}`}>
-              {rankIcon(idx + 1)}
-            </span>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-slate-900 dark:text-white truncate">@{entry._id}</p>
-              <div className="flex gap-4 text-xs text-slate-500 dark:text-white/40 mt-1.5">
-                <span className="flex items-center gap-1"><span className="text-slate-700 dark:text-white/70 font-medium">{entry.totalGiveaways}</span> giveaway{entry.totalGiveaways !== 1 ? 's' : ''}</span>
-                <span className="flex items-center gap-1"><span className="text-slate-700 dark:text-white/70 font-medium">{entry.totalParticipants.toLocaleString()}</span> participants</span>
-              </div>
-            </div>
+    <div className="min-h-screen pt-32 pb-24">
+      <div className="neo-container max-w-5xl animate-fade-in-up">
+        
+        <header className="mb-16 text-center">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-bgElevated border border-borderStrong text-3xl text-textPrimary mb-6 shadow-sm">
+            <FaTrophy className="text-[#fbbf24]" />
           </div>
-        ))}
+          <h1 className="neo-title mb-6">
+            Global Leaderboards
+          </h1>
+          <p className="neo-subtitle max-w-2xl mx-auto">
+            Discover the most active giveaway hosts and top winners across platforms.
+          </p>
+        </header>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {PLATFORMS.map((platform, i) => {
+            const Icon = platform.icon;
+            
+            if (!platform.active) {
+              return (
+                <div 
+                  key={platform.id} 
+                  className="neo-card p-8 flex flex-col items-center justify-center text-center opacity-60 grayscale cursor-not-allowed"
+                >
+                  <Icon className="text-4xl text-textMuted mb-4" />
+                  <h3 className="text-lg font-bold text-textPrimary mb-2">{platform.name}</h3>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-textMuted bg-borderSubtle px-3 py-1 rounded-full">
+                    Coming Soon
+                  </span>
+                </div>
+              );
+            }
+
+            return (
+              <Link key={platform.id} href={`/leaderboard/${platform.id}`} className="group block">
+                <div 
+                  className="neo-card p-8 flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:border-accentPrimary/50"
+                  style={{ animationDelay: `${0.1 * i}s` }}
+                >
+                  <div className="h-16 w-16 rounded-2xl bg-bgBase border border-borderSubtle flex items-center justify-center mb-6 text-textSecondary transition-colors group-hover:text-accentPrimary group-hover:bg-accentPrimary/5">
+                    <Icon className="text-3xl" />
+                  </div>
+                  <h3 className="text-lg font-bold text-textPrimary mb-2">{platform.name}</h3>
+                  <span className="text-sm text-textSecondary">View Rankings →</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
       </div>
     </div>
   );

@@ -1,39 +1,58 @@
-import { FaLock, FaShieldHalved, FaBolt, FaChartLine } from 'react-icons/fa6';
-import { FEATURES } from '@/lib/home-data';
+import { FaLock, FaGlobe, FaCubes, FaWandMagicSparkles } from 'react-icons/fa6';
 
-const icons = [FaLock, FaShieldHalved, FaBolt, FaChartLine];
+const features = [
+  {
+    icon: FaLock,
+    title: 'Cryptographic Proof',
+    description: 'Every draw is powered by verifiable randomness. The mathematical proof is stored immutably, ensuring results cannot be tampered with.',
+  },
+  {
+    icon: FaGlobe,
+    title: 'Public Ledger',
+    description: 'Results are permanently recorded on our public ledger. Anyone can verify the authenticity of a draw at any time using the Draw ID.',
+  },
+  {
+    icon: FaCubes,
+    title: 'Multi-Platform',
+    description: 'Seamlessly integrate with X (Twitter), Instagram, Facebook, and more. Or import your own CSV of entries for custom giveaways.',
+  },
+  {
+    icon: FaWandMagicSparkles,
+    title: 'Elegant Experience',
+    description: 'A beautiful, frictionless interface designed for both hosts and participants. Running a fair giveaway has never been this easy.',
+  },
+];
 
 export function HomeFeaturesSection() {
   return (
-    <section className="relative border-t border-slate-200 px-6 py-24 dark:border-white/[0.06]">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-16 text-center animate-fade-in-up">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-violet-500 dark:text-violet-400/80">
-            Why FairGiveaway?
-          </p>
-          <h2 className="mb-5 text-3xl font-bold tracking-tight sm:text-4xl text-slate-900 dark:text-white">
-            Trust Built into the Code
-          </h2>
-          <p className="mx-auto max-w-2xl leading-relaxed text-slate-500 dark:text-white/45">
-            Traditional giveaway pickers are easily manipulated behind closed doors. We solve this by making the random selection process cryptographically secure and publicly auditable.
+    <section className="py-24 relative">
+      <div className="neo-container">
+        <div className="text-center mb-20 animate-fade-in-up">
+          <h2 className="neo-label-sm mb-4">Why FairGiveaway</h2>
+          <h3 className="text-3xl md:text-4xl font-bold text-textPrimary mb-6">
+            Trust through mathematics.
+          </h3>
+          <p className="neo-subtitle max-w-2xl mx-auto">
+            We remove the guesswork from giveaways by replacing black-box selections with cryptographic certainty.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {FEATURES.map((f, i) => {
-            const Icon = icons[i % icons.length];
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          {features.map((feature, i) => {
+            const Icon = feature.icon;
             return (
-              <div
-                key={f.title}
-                className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none animate-fade-in-up"
-                style={{ animationDelay: `${0.1 + i * 0.1}s` }}
+              <div 
+                key={feature.title}
+                className="neo-card p-8 lg:p-10 group"
               >
-                <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-lg bg-teal/10 text-teal dark:text-teal-light">
-                  <Icon className="text-lg" />
+                <div className="h-12 w-12 rounded-xl bg-bgBase border border-borderStrong flex items-center justify-center mb-6 text-textPrimary transition-transform group-hover:scale-110">
+                  <Icon className="text-xl" />
                 </div>
-                <h3 className="mb-3 font-semibold text-slate-900 dark:text-white">{f.title}</h3>
-                <p className="text-sm leading-relaxed text-slate-500 dark:text-white/45">
-                  {f.description}
+                <h4 className="text-xl font-bold text-textPrimary mb-3">
+                  {feature.title}
+                </h4>
+                <p className="text-textSecondary leading-relaxed">
+                  {feature.description}
                 </p>
               </div>
             );

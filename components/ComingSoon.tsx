@@ -1,25 +1,33 @@
 import Link from 'next/link';
-import { FaClockRotateLeft } from 'react-icons/fa6';
+import { FaWandMagicSparkles, FaArrowLeft } from 'react-icons/fa6';
 
 export default function ComingSoon({ platform }: { platform: string }) {
   return (
-    <div className="flex min-h-[calc(100vh-140px)] flex-col items-center justify-center p-6 text-center animate-fade-in-up">
-      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-100 text-4xl text-slate-400 dark:bg-white/[0.04] dark:text-white/20">
-        <FaClockRotateLeft />
+    <div className="min-h-screen pt-32 pb-24 flex items-center justify-center">
+      <div className="neo-container max-w-lg text-center animate-fade-in-up">
+        <div className="neo-card p-10 flex flex-col items-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-bgElevated border border-borderStrong text-2xl text-accentPrimary mb-6 shadow-sm">
+            <FaWandMagicSparkles />
+          </div>
+          
+          <h1 className="neo-title mb-4 capitalize">
+            {platform}
+          </h1>
+          
+          <p className="neo-subtitle mb-8">
+            We are currently crafting a provably fair experience for {platform}. 
+            It will be available very soon. Stay tuned for updates!
+          </p>
+
+          <Link
+            href="/platforms"
+            className="neo-button-secondary w-full"
+          >
+            <FaArrowLeft className="mr-2" />
+            Back to Platforms
+          </Link>
+        </div>
       </div>
-      <h1 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-        {platform} Support is Coming Soon
-      </h1>
-      <p className="mx-auto mb-8 max-w-md text-slate-500 dark:text-white/45">
-        We're working hard to bring provably fair giveaways to {platform}. 
-        Check back later or join our community for updates!
-      </p>
-      <Link
-        href="/platforms"
-        className="rounded-xl bg-teal px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal/20 transition-all hover:bg-teal-light hover:shadow-teal-light/30"
-      >
-        View Available Platforms
-      </Link>
     </div>
   );
 }

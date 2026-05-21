@@ -1,37 +1,54 @@
-import { FAQS } from '@/lib/home-data';
+'use client';
+
+import { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa6';
+import { FAQS } from '@/lib/home-data';
 
 export function HomeFaq() {
+  const [openIndex, setOpenIndex] = useState<number>(0);
+
   return (
-    <section className="relative border-t border-slate-200 px-6 py-24 dark:border-white/[0.06]">
-      <div className="mx-auto max-w-3xl">
-        <div className="mb-14 text-center animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-violet-500 dark:text-violet-400/80">
-            FAQ
-          </p>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-slate-900 dark:text-white">
+    <section id="faq" className="py-24 bg-bgBase relative">
+      <div className="neo-container max-w-3xl">
+        <div className="text-center mb-16">
+          <h2 className="neo-label-sm mb-4">FAQ</h2>
+          <h3 className="text-3xl md:text-4xl font-bold text-textPrimary">
             Frequently Asked Questions
-          </h2>
+          </h3>
         </div>
-        
+
         <div className="space-y-4">
-          {FAQS.map((faq, i) => (
-            <details 
-              key={i} 
-              className="group rounded-xl border border-slate-200 bg-white shadow-sm dark:border-white/[0.08] dark:bg-white/[0.02] dark:shadow-none animate-fade-in-up [&_summary::-webkit-details-marker]:hidden"
-              style={{ animationDelay: `${0.5 + i * 0.1}s` }}
-            >
-              <summary className="flex cursor-pointer items-center justify-between p-6 md:p-8 text-lg font-semibold text-slate-900 dark:text-white outline-none focus-visible:ring-2 focus-visible:ring-teal/50 rounded-xl">
-                {faq.q}
-                <span className="ml-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-50 dark:bg-white/[0.04] transition duration-300 group-open:rotate-180">
-                  <FaChevronDown className="text-sm text-slate-500 dark:text-white/40" />
-                </span>
-              </summary>
-              <div className="px-6 pb-6 md:px-8 md:pb-8 text-slate-500 dark:text-white/45 leading-relaxed border-t border-slate-100 dark:border-white/[0.04] pt-4 mt-2">
-                {faq.a}
+          {FAQS.map((faq, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <div 
+                key={index} 
+                className={`neo-card transition-all duration-300 overflow-hidden ${
+                  isOpen ? 'border-borderStrong bg-bgElevated' : 'border-borderSubtle bg-bgBase hover:bg-bgElevated'
+                }`}
+              >
+                <button
+                  className="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none"
+                  onClick={() => setOpenIndex(isOpen ? -1 : index)}
+                  aria-expanded={isOpen}
+                >
+                  <span className="font-semibold text-textPrimary pr-4">{faq.q}</span>
+                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-borderSubtle text-textSecondary transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                    <FaChevronDown className="text-sm" />
+                  </div>
+                </button>
+                <div 
+                  className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${
+                    isOpen ? 'max-h-96 pb-6 opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <p className="text-textSecondary leading-relaxed text-sm">
+                    {faq.a}
+                  </p>
+                </div>
               </div>
-            </details>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
