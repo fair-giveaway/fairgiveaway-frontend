@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState, useCallback, use } from 'react';
+import { getDrawStatus, type DrawStatusResult } from '@/lib/api';
+import FinalizedSession from '@/components/draw/FinalizedSession';
 import { useRouter } from 'next/navigation';
-import { getDrawStatus, getCachedDrawSession, type DrawStatusResult } from '@/lib/api';
-import ActiveSession from '@/components/draw/ActiveSession';
 
 function Skeleton() {
   return (
@@ -21,8 +21,8 @@ function Skeleton() {
   );
 }
 
-export default function DrawPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function HistoryDrawPage({ params }: { params: Promise<{ platform: string, id: string }> }) {
+  const { platform, id } = use(params);
   const router = useRouter();
   const [data, setData] = useState<DrawStatusResult | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,22 +31,6 @@ export default function DrawPage({ params }: { params: Promise<{ id: string }> }
   const fetchStatus = useCallback(async () => {
     try {
       setLoading(true);
-
-      // Try sessionStorage first (active draw cached from init)
-      const cached = getCachedDrawSession(id);
-      if (cached) {
-        setData({
-          status: 'active',
-          participants: cached.participants,
-          drawId: id,
-          mode: cached.mode,
-          tweetId: cached.tweetId,
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Fallback to API (for finalized draws or direct URL access)
       const result = await getDrawStatus(id);
       setData(result);
     } catch (err) {
@@ -58,14 +42,8 @@ export default function DrawPage({ params }: { params: Promise<{ id: string }> }
 
   useEffect(() => {
     fetchStatus();
-    document.title = `Draw ${id.slice(0, 8)} | FairGiveaway.online`;
+    document.title = `Historical Draw ${id.slice(0, 8)} | FairGiveaway.online`;
   }, [fetchStatus, id]);
-
-  useEffect(() => {
-    if (data?.status === 'finalized') {
-      router.replace(`/history/x/${id}`);
-    }
-  }, [data?.status, id, router]);
 
   if (loading) return <Skeleton />;
 
@@ -80,11 +58,14 @@ export default function DrawPage({ params }: { params: Promise<{ id: string }> }
     );
   }
 
-  if (!data) {
+  if (!data || data.status !== 'finalized' || !data.data) {
     return (
       <div className="py-32 px-6">
         <div className="max-w-2xl mx-auto neo-card p-12 text-center animate-fade-in-up">
-          <p className="text-textSecondary text-lg font-medium">Draw not found or expired.</p>
+          <p className="text-textSecondary text-lg font-medium mb-4">This draw is either not found or has not been finalized yet.</p>
+          <button onClick={() => router.push(`/platforms/${platform}/draw/${id}`)} className="neo-button-primary">
+            Go to Active Session
+          </button>
         </div>
       </div>
     );
@@ -92,9 +73,7 @@ export default function DrawPage({ params }: { params: Promise<{ id: string }> }
 
   return (
     <div className="py-32 px-6 max-w-7xl mx-auto">
-      {data.status === 'active' && (
-        <ActiveSession drawId={id} data={data} onFinalized={fetchStatus} />
-      )}
+      <FinalizedSession data={data.data} drawId={id} />
     </div>
   );
 }

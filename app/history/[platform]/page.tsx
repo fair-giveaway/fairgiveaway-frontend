@@ -59,28 +59,59 @@ export default function PlatformHistoryPage({ params }: { params: Promise<{ plat
             draws.map((draw, i) => (
               <a 
                 key={draw._id} 
-                href={`/platforms/${platform}/draw/${draw._id}`}
+                href={`/history/${platform}/${draw._id}`}
                 className="group block"
               >
                 <div 
                   className="neo-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all hover:border-accentPrimary"
                 >
-                  <div>
-                    <h3 className="text-lg font-bold text-textPrimary mb-1">
-                      @{draw.hostUsername || 'Unknown'}
-                    </h3>
-                    <p className="text-sm text-textSecondary">
-                      {new Date(draw.createdAt).toLocaleDateString()} at {new Date(draw.createdAt).toLocaleTimeString()}
-                    </p>
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-full overflow-hidden bg-bgElevated shrink-0 border border-borderStrong">
+                      {draw.hostUsername ? (
+                        <img src={`https://unavatar.io/twitter/${draw.hostUsername}`} alt={draw.hostUsername} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-textMuted"><FaCube /></div>
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-textPrimary mb-1">
+                        @{draw.hostUsername || 'Unknown'}
+                      </h3>
+                      <p className="text-sm text-textSecondary">
+                        {new Date(draw.createdAt).toLocaleDateString()} at {new Date(draw.createdAt).toLocaleTimeString()}
+                      </p>
+                    </div>
                   </div>
                   
-                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
-                    <span className="text-xs font-semibold bg-bgBase border border-borderStrong text-textPrimary px-3 py-1 rounded-full capitalize">
-                      {draw.mode}
-                    </span>
-                    <span className="text-xs font-semibold bg-accentPrimary/10 text-accentPrimary px-3 py-1 rounded-full flex items-center gap-1">
-                      <FaTrophy /> {draw.winners.length} Winners
-                    </span>
+                  <div className="flex flex-col sm:items-end gap-3 mt-4 sm:mt-0">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-semibold bg-bgBase border border-borderStrong text-textPrimary px-3 py-1 rounded-full capitalize">
+                        {draw.mode}
+                      </span>
+                      <span className="text-xs font-semibold bg-accentPrimary/10 text-accentPrimary px-3 py-1 rounded-full flex items-center gap-1">
+                        <FaTrophy /> {draw.winners.length} Winners
+                      </span>
+                    </div>
+                    
+                    {draw.winners.length > 0 && (
+                      <div className="flex -space-x-2">
+                        {draw.winners.slice(0, 3).map((w, idx) => (
+                          <img 
+                            key={w.username}
+                            src={`https://unavatar.io/twitter/${w.username}`} 
+                            alt={w.username}
+                            className="w-8 h-8 rounded-full border-2 border-bgBase bg-bgElevated object-cover shadow-sm relative"
+                            style={{ zIndex: 10 - idx }}
+                            title={`Winner: @${w.username}`}
+                          />
+                        ))}
+                        {draw.winners.length > 3 && (
+                          <div className="w-8 h-8 rounded-full border-2 border-bgBase bg-bgElevated text-[10px] font-bold text-textSecondary flex items-center justify-center relative shadow-sm" style={{ zIndex: 0 }}>
+                            +{draw.winners.length - 3}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </a>

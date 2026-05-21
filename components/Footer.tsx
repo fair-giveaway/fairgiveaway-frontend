@@ -50,7 +50,7 @@ export function Footer() {
           <div>
             <h3 className="neo-label-sm mb-5">Resources</h3>
             <ul className="space-y-4">
-              <li><a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Frontend Repository</a></li>
+              <li><a href={siteConfig.links.frontend} target="_blank" rel="noopener noreferrer" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Frontend Repository</a></li>
               <li><a href={siteConfig.links.backend} target="_blank" rel="noopener noreferrer" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Backend Repository</a></li>
               <li><Link href="/#faq" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">FAQ</Link></li>
             </ul>
@@ -70,7 +70,7 @@ export function Footer() {
             &copy; {currentYear} FairGiveaway. Open source under MIT License.
           </p>
           <div className="flex items-center gap-2 text-sm text-textMuted">
-            Built by Isaac Newton
+            Built by <a href="https://github.com/isaacnewton123" target="_blank" rel="noopener noreferrer" className="hover:text-accentPrimary transition-colors font-medium">Isaac Newton</a>
           </div>
         </div>
       </div>

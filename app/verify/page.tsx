@@ -18,7 +18,7 @@ export default function VerifyPage() {
     try {
       const res = await searchDraw(drawId.trim());
       if (res.found && res.platform) {
-        router.push(`/platforms/${res.platform.toLowerCase()}/draw/${drawId.trim()}`);
+        router.push(`/history/${res.platform.toLowerCase()}/${drawId.trim()}`);
       } else {
         setError('Draw not found. Please check the ID and try again.');
       }

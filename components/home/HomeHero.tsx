@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { FaGithub } from 'react-icons/fa6';
+import { siteConfig } from '@/lib/shared';
 
 export function HomeHero() {
   return (
@@ -31,6 +33,13 @@ export function HomeHero() {
           <Link href="/verify" className="neo-button-secondary w-full sm:w-auto h-14 px-8 text-lg">
             Verify Results
           </Link>
+        </div>
+
+        <div className="mt-8 flex items-center justify-center gap-2 text-sm text-textSecondary animate-fade-in-up stagger-4 max-w-xl mx-auto">
+          <FaGithub className="text-xl shrink-0" />
+          <span>
+            100% Open Source. <a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer" className="text-accentPrimary hover:underline font-medium transition-colors">Inspect the code</a> and verify the transparency yourself.
+          </span>
         </div>
       </div>
     </section>

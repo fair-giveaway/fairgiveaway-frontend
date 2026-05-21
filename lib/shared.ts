@@ -6,7 +6,8 @@ export const siteConfig = {
   tagline: 'Trust Built into the Code',
   links: {
     twitter: 'https://x.com/isaac_newton252',
-    github: 'https://github.com/fair-giveaway/fairgiveaway-frontend',
+    github: 'https://github.com/fair-giveaway',
+    frontend: 'https://github.com/fair-giveaway/fairgiveaway-frontend',
     backend: 'https://github.com/fair-giveaway/fairgiveaway-backend',
   },
 };
