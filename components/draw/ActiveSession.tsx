@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import {
   FaCopy, FaCheck, FaUserGroup, FaDice,
-  FaTrophy, FaMedal,
+  FaTrophy,
 } from 'react-icons/fa6';
 import { type DrawStatusResult } from '@/lib/api';
 import { type Phase, type VerifyStep } from './types';
@@ -65,10 +65,6 @@ export default function ActiveSession({ drawId, data }: Props) {
     // 2. Engagement Tasks
     if (mustLike) steps.push({ label: 'Checking Like...', status: 'pending' });
     if (mustComment) steps.push({ label: 'Checking Comment...', status: 'pending' });
-    if (mustFollow) {
-      const valid = followUsernames.filter(u => u.trim());
-      if (valid.length > 0) steps.push({ label: `Follow ${valid.map(u => '@' + u).join(', ')}`, status: 'pending' });
-    }
     if (mustExternal && externalUrl.trim()) {
       if (extMustLike) steps.push({ label: 'External Like', status: 'pending' });
       if (extMustRepost) steps.push({ label: 'External Repost', status: 'pending' });
@@ -80,10 +76,16 @@ export default function ActiveSession({ drawId, data }: Props) {
     }
     
     return steps;
-  }, [mustLike, mustComment, mustFollow, followUsernames, mustExternal, externalUrl, extMustLike, extMustRepost, extMustComment, extMustQuote, mustPfp, mustBio, mustAge, mustActivity]);
+  }, [mustLike, mustComment, mustExternal, externalUrl, extMustLike, extMustRepost, extMustComment, extMustQuote, mustPfp, mustBio, mustAge, mustActivity]);
+
+  const configState = {
+    mustLike, mustComment, mustFollow, followUsernames,
+    mustExternal, externalUrl, extMustLike, extMustRepost, extMustComment, extMustQuote,
+    mustPfp, mustBio, mustAge, minMonths, mustActivity, minPosts
+  };
 
   const { slots, saving, handleRoll } = useVerification({
-    drawId, data, primaryCount, secondaryCount, buildSteps, setPhase, setError, phase,
+    drawId, data, primaryCount, secondaryCount, buildSteps, setPhase, setError, phase, configState,
   });
 
   const configProps = {

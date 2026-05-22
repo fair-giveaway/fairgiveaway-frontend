@@ -29,7 +29,7 @@ export default function LeaderboardHubPage() {
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PLATFORMS.map((platform, i) => {
+          {PLATFORMS.map((platform) => {
             const Icon = platform.icon;
             
             if (!platform.active) {

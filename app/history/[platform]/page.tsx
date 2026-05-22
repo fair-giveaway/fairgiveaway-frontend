@@ -96,7 +96,7 @@ export default function PlatformHistoryPage({ params }: { params: Promise<{ plat
                     </div>
                     <div>
                       <h3 className="text-lg font-bold text-textPrimary mb-1">
-                        @{draw.hostUsername || 'Unknown'}
+                        {(!draw.hostUsername || ['unknown', 'Anonymous', 'simulated_user'].includes(draw.hostUsername)) ? 'Unknown' : `@${draw.hostUsername}`}
                       </h3>
                       <p className="text-sm text-textSecondary">
                         {new Date(draw.createdAt).toLocaleDateString()} at {new Date(draw.createdAt).toLocaleTimeString()}

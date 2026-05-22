@@ -62,6 +62,101 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
   const primaryWinners = data.winners.filter(w => w.type === 'primary');
   const secondaryWinners = data.winners.filter(w => w.type === 'secondary');
 
+  const hasNewFeatures = !!data.engagementTasks || !!data.antiBotFilters;
+  const hasLegacyFeatures = data.enabledFeatures && data.enabledFeatures.length > 0;
+  
+  const hasEngagement = data.engagementTasks && (data.engagementTasks.mustLike || data.engagementTasks.mustComment || data.engagementTasks.mustFollow || data.engagementTasks.mustExternal);
+  const hasAntiBot = data.antiBotFilters && (data.antiBotFilters.mustPfp || data.antiBotFilters.mustBio || data.antiBotFilters.mustAge || data.antiBotFilters.mustActivity);
+
+  const featuresBoxContent = (
+    <>
+      <h3 className="text-xl font-bold text-textPrimary border-b border-borderSubtle pb-4 mb-6">
+        Enabled Features & Filters
+      </h3>
+      {hasNewFeatures ? (
+        <div className="flex flex-col gap-6">
+          {hasEngagement && (
+            <div>
+              <span className="neo-label-sm mb-3 block">Engagement Tasks</span>
+              <ul className="space-y-2 text-sm text-textSecondary">
+                {data.engagementTasks?.mustLike && <li className="flex items-center gap-2"><FaCheck className="text-emerald-500" /> Must Like Target Post</li>}
+                {data.engagementTasks?.mustComment && <li className="flex items-center gap-2"><FaCheck className="text-emerald-500" /> Must Comment</li>}
+                {data.engagementTasks?.mustFollow && data.engagementTasks.followUsernames && data.engagementTasks.followUsernames.length > 0 && (
+                  <li className="flex items-center gap-2"><FaCheck className="text-emerald-500" /> Follow: {data.engagementTasks.followUsernames.map(u => `@${u}`).join(', ')}</li>
+                )}
+                {data.engagementTasks?.mustExternal && data.engagementTasks.externalUrl && (
+                  <li className="flex flex-col gap-1.5 mt-2">
+                    <div className="flex items-center gap-2">
+                      <FaCheck className="text-emerald-500" /> External Post Interaction
+                    </div>
+                    <a href={data.engagementTasks.externalUrl} target="_blank" rel="noopener noreferrer" className="ml-6 text-xs font-semibold text-accentPrimary hover:underline break-all">
+                      {data.engagementTasks.externalUrl}
+                    </a>
+                    <div className="ml-6 mt-0.5 flex flex-wrap gap-1.5">
+                      {data.engagementTasks.extMustLike && <span className="text-[10px] uppercase font-bold bg-borderStrong text-textPrimary px-2 py-0.5 rounded">Like</span>}
+                      {data.engagementTasks.extMustRepost && <span className="text-[10px] uppercase font-bold bg-borderStrong text-textPrimary px-2 py-0.5 rounded">Repost</span>}
+                      {data.engagementTasks.extMustComment && <span className="text-[10px] uppercase font-bold bg-borderStrong text-textPrimary px-2 py-0.5 rounded">Comment</span>}
+                      {data.engagementTasks.extMustQuote && <span className="text-[10px] uppercase font-bold bg-borderStrong text-textPrimary px-2 py-0.5 rounded">Quote</span>}
+                    </div>
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
+
+          {hasEngagement && hasAntiBot && <hr className="border-borderSubtle" />}
+
+          {hasAntiBot && (
+            <div>
+              <span className="neo-label-sm mb-3 block">Anti-Bot Filters</span>
+              <ul className="space-y-2 text-sm text-textSecondary">
+                {data.antiBotFilters?.mustPfp && <li className="flex items-center gap-2"><FaCheck className="text-emerald-500" /> Profile Picture & Banner</li>}
+                {data.antiBotFilters?.mustBio && <li className="flex items-center gap-2"><FaCheck className="text-emerald-500" /> Custom Bio Text</li>}
+                {data.antiBotFilters?.mustAge && <li className="flex items-center gap-2"><FaCheck className="text-emerald-500" /> Min. Account Age: {data.antiBotFilters.minMonths} months</li>}
+                {data.antiBotFilters?.mustActivity && <li className="flex items-center gap-2"><FaCheck className="text-emerald-500" /> Min. Post Count: {data.antiBotFilters.minPosts} posts</li>}
+              </ul>
+            </div>
+          )}
+        </div>
+      ) : hasLegacyFeatures ? (
+        <div className="flex flex-wrap gap-2">
+          {data.enabledFeatures!.map((feat, i) => (
+            <span key={i} className="text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 bg-borderStrong text-textPrimary rounded-md">
+              {feat}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-textSecondary italic">
+          Host did not enable any additional features.
+        </p>
+      )}
+    </>
+  );
+
+  const participantsBoxContent = (
+    <>
+      <h3 className="text-xl font-bold text-textPrimary border-b border-borderSubtle pb-4 mb-6">
+        Participant Ledger
+      </h3>
+      {data.participants && data.participants.length > 0 && (
+        <div className="mb-6">
+          <span className="neo-label-sm mb-2 block">All Valid Participants</span>
+          <div className="max-h-32 overflow-y-auto p-3 bg-bgElevated border border-borderSubtle rounded-lg flex flex-wrap gap-1.5 custom-scrollbar">
+            {data.participants.map((p, i) => (
+              <span key={i} className="text-[10px] font-mono text-textSecondary bg-bgBase border border-borderStrong px-1.5 py-0.5 rounded">
+                @{p}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      <p className="text-xs text-textSecondary leading-snug">
+        <strong className="text-textPrimary">Note:</strong> Only valid public accounts are accepted. Private accounts or those hidden by the X anti-spam system cannot be included.
+      </p>
+    </>
+  );
+
   return (
     <div className="max-w-4xl mx-auto animate-fade-in-up">
       {/* Anti-Cheat Banner */}
@@ -88,8 +183,10 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        {/* Left: Info */}
-        <div className="neo-card p-8 space-y-6">
+        {/* Left Column: Info & Features */}
+        <div className="flex flex-col gap-8">
+          {/* Draw Details */}
+          <div className="neo-card p-8 space-y-6">
           <h3 className="text-xl font-bold text-textPrimary border-b border-borderSubtle pb-4">
             Draw Details
           </h3>
@@ -137,9 +234,17 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
           </div>
         </div>
 
-        {/* Right: Winners */}
-        <div className="neo-card p-8">
-          <div className="flex items-center justify-between mb-6 border-b border-borderSubtle pb-4">
+        {/* Enabled Features Box (Desktop Only) */}
+        <div className="neo-card p-8 h-fit hidden md:block">
+          {featuresBoxContent}
+        </div>
+        </div>
+
+        {/* Right Column: Winners & Participants */}
+        <div className="flex flex-col gap-8">
+          {/* Official Winners */}
+          <div className="neo-card p-8 h-fit">
+            <div className="flex items-center justify-between mb-6 border-b border-borderSubtle pb-4">
             <h3 className="text-xl font-bold text-textPrimary">
               Official Winners
             </h3>
@@ -155,7 +260,7 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
                 className="flex items-center gap-4 p-4 rounded-xl border border-accentPrimary/30 bg-accentPrimary/5"
               >
                 <Avatar username={w.username} src={w.avatarUrl} size="lg" />
-                <div className="flex flex-col">
+                <div className="flex flex-col flex-1">
                   <span className="font-bold text-lg text-textPrimary leading-tight">
                     @{w.username}
                   </span>
@@ -163,6 +268,16 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
                     <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-accentPrimary/20 text-[10px]">{i + 1}</span>
                     Primary Winner
                   </span>
+                  {w.commentProofUrl && (
+                    <a 
+                      href={w.commentProofUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 text-xs font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 self-start bg-emerald-500/10 px-2 py-1 rounded-md transition-colors"
+                    >
+                      🔗 View Comment Proof
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -172,7 +287,7 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
                 className="flex items-center gap-4 p-4 rounded-xl border border-borderStrong bg-bgBase"
               >
                 <Avatar username={w.username} src={w.avatarUrl} size="md" />
-                <div className="flex flex-col">
+                <div className="flex flex-col flex-1">
                   <span className="font-semibold text-textSecondary leading-tight">
                     @{w.username}
                   </span>
@@ -180,6 +295,16 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
                     <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-borderStrong text-[10px]">{primaryWinners.length + i + 1}</span>
                     Secondary
                   </span>
+                  {w.commentProofUrl && (
+                    <a 
+                      href={w.commentProofUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 text-[10px] font-bold text-emerald-500/70 hover:text-emerald-500 flex items-center gap-1 self-start transition-colors"
+                    >
+                      🔗 Comment Proof
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -201,6 +326,22 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
             </button>
           </div>
         </div>
+        
+        {/* Participants Box (Desktop Only) */}
+        <div className="neo-card p-8 h-fit hidden md:block">
+          {participantsBoxContent}
+        </div>
+      </div>
+      </div>
+
+      {/* Enabled Features Box (Mobile Only) */}
+      <div className="neo-card p-8 h-fit block md:hidden mb-8">
+        {featuresBoxContent}
+      </div>
+
+      {/* Participants Box (Mobile Only) */}
+      <div className="neo-card p-8 h-fit block md:hidden mb-8">
+        {participantsBoxContent}
       </div>
 
       {/* Tip Section */}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaXTwitter, FaClockRotateLeft, FaTrophy, FaArrowRight } from 'react-icons/fa6';
 import { initDraw } from '@/lib/api';
+import InteractiveLoadingModal from '@/components/ui/InteractiveLoadingModal';
 
 function extractTweetId(url: string): string | null {
   if (!url.trim()) return null;
@@ -29,6 +30,8 @@ export default function XHubPage() {
   const [postUrl, setPostUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalSuccess, setModalSuccess] = useState(false);
 
   useEffect(() => {
     document.title = '𝕏 Giveaway Hub | FairGiveaway.online';
@@ -43,10 +46,16 @@ export default function XHubPage() {
 
     const host = extractUsername(postUrl);
     setLoading(true);
+    setModalOpen(true);
+    setModalSuccess(false);
     setError('');
+    
     try {
       const res = await initDraw(tweetId, 'reposts', host);
-      router.push(`/platforms/x/draw/${res.drawId}`);
+      setModalSuccess(true);
+      setTimeout(() => {
+        router.push(`/platforms/x/draw/${res.drawId}`);
+      }, 500);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to initialize draw.');
     } finally {
@@ -56,6 +65,17 @@ export default function XHubPage() {
 
   return (
     <div className="min-h-screen pt-32 pb-24">
+      <InteractiveLoadingModal
+        isOpen={modalOpen}
+        isError={!!error}
+        errorMessage={error}
+        isSuccess={modalSuccess}
+        onCloseError={() => {
+          setModalOpen(false);
+          setError('');
+        }}
+      />
+      
       <div className="neo-container max-w-3xl animate-fade-in-up">
         
         <header className="mb-12 text-center">
@@ -94,18 +114,9 @@ export default function XHubPage() {
               disabled={loading || !postUrl.trim()}
               className="neo-button-primary w-full h-14 text-base flex items-center justify-center gap-2"
             >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="w-5 h-5 border-2 border-bgBase/30 border-t-bgBase rounded-full animate-spin" />
-                  Fetching Participants…
-                </span>
-              ) : (
-                <>
-                  Initialize Draw <FaArrowRight />
-                </>
-              )}
+              Initialize Draw <FaArrowRight />
             </button>
-            {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+            {error && !modalOpen && <p className="text-red-500 text-sm font-medium">{error}</p>}
           </div>
         </div>
 

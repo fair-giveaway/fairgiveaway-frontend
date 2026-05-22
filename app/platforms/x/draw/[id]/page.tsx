@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { getDrawStatus, getCachedDrawSession, type DrawStatusResult } from '@/lib/api';
+import { getDrawStatus, type DrawStatusResult } from '@/lib/api';
 import ActiveSession from '@/components/draw/ActiveSession';
 
 function Skeleton() {
@@ -32,22 +32,7 @@ export default function DrawPage({ params }: { params: Promise<{ id: string }> }
     try {
       setLoading(true);
 
-      // Try sessionStorage first (active draw cached from init)
-      const cached = getCachedDrawSession(id);
-      if (cached) {
-        setData({
-          status: 'active',
-          participants: cached.participants,
-          drawId: id,
-          mode: cached.mode,
-          tweetId: cached.tweetId,
-          hostUsername: cached.hostUsername,
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Fallback to API (for finalized draws or direct URL access)
+      // Fetch from API (checks Redis for active, Mongo for finalized)
       const result = await getDrawStatus(id);
       setData(result);
     } catch (err) {
@@ -58,6 +43,7 @@ export default function DrawPage({ params }: { params: Promise<{ id: string }> }
   }, [id]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchStatus();
     document.title = `Draw ${id.slice(0, 8)} | FairGiveaway.online`;
   }, [fetchStatus, id]);

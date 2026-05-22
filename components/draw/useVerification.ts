@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { saveDraw, type DrawStatusResult } from '@/lib/api';
+import { saveDraw, verifyCandidate, type DrawStatusResult } from '@/lib/api';
 import { selectWinners } from '@/lib/fairDraw';
-import { type VerifySlot, type VerifyStep, type Phase } from './types';
+import type { VerifySlot, VerifyStep, Phase } from './types';
+export type { VerifySlot, VerifyStep, Phase };
 
 interface VerificationProps {
   drawId: string;
@@ -13,6 +14,7 @@ interface VerificationProps {
   setPhase: (phase: Phase) => void;
   setError: (error: string) => void;
   phase: Phase;
+  configState: Partial<import('@/lib/api').GiveawayConfig>;
 }
 
 const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -27,9 +29,10 @@ export function useVerification({
   setPhase,
   setError,
   phase,
+  configState,
 }: VerificationProps) {
   const router = useRouter();
-  const participants = data.participants || [];
+  const participants = useMemo(() => data.participants || [], [data.participants]);
   
   const [pool, setPool] = useState<string[]>(participants);
   const poolRef = useRef<string[]>(participants);
@@ -81,21 +84,21 @@ export function useVerification({
     });
   };
 
-  const processSlotStep = async (si: number, sti: number): Promise<boolean> => {
+  const processSlotStep = async (si: number, sti: number, realPassed: boolean): Promise<boolean> => {
     updateStepStatus(si, sti, 'checking', false);
     await delay(randomDelay());
-    const passed = Math.random() < 0.75;
-    updateStepStatus(si, sti, passed ? 'passed' : 'failed', !passed);
-    return passed;
+    updateStepStatus(si, sti, realPassed ? 'passed' : 'failed', !realPassed);
+    return realPassed;
   };
 
-  const finalizeSlot = (si: number, username: string) => {
+  const finalizeSlot = (si: number, username: string, avatarUrl: string) => {
     const commentEnabled = buildSteps().some((s) => s.label.startsWith('Checking Comment'));
-    const commentUrl = commentEnabled ? `https://x.com/i/status/${data.tweetId}#comment_${username}` : undefined;
+    const commentUrl = commentEnabled ? `https://x.com/search?q=from%3A${username}%20conversation_id%3A${data.tweetId}&f=live` : undefined;
     
     setSlots((prev) => {
       const next = [...prev];
-      next[si] = { ...next[si], status: 'verified', commentProofUrl: commentUrl };
+      const slot = { ...next[si], status: 'verified' as const, commentProofUrl: commentUrl, avatarUrl };
+      next[si] = slot;
       return next;
     });
     setPool((prev) => prev.filter((p) => p !== username));
@@ -119,8 +122,8 @@ export function useVerification({
     return true;
   };
 
-  const processSingleSlot = async (si: number): Promise<string | null> => {
-    let verifiedUser: string | null = null;
+  const processSingleSlot = async (si: number): Promise<{ username: string; avatarUrl: string } | null> => {
+    let verifiedUser: { username: string; avatarUrl: string } | null = null;
     while (!verifiedUser) {
       // 1. Drawing Phase Delay
       await delay(1500); // 1.5 seconds of spinning
@@ -134,18 +137,38 @@ export function useVerification({
         return next;
       });
 
+      const currentUser = slotsRef.current[si].username;
+
+      // 2. Call Real Verification Backend
+      let vResult = null;
+      try {
+        vResult = await verifyCandidate(currentUser, data.tweetId || '', configState);
+      } catch (err) {
+        console.error("Verification failed:", err);
+        // Fallback or just fail them if backend crashed
+        vResult = { avatarUrl: `https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png`, passedPfp: false, passedBio: false, passedAge: false, passedActivity: false, passedComment: false };
+      }
+
       const steps = slotsRef.current[si].steps;
       let passedAll = true;
 
       for (let sti = 0; sti < steps.length; sti++) {
-        const passed = await processSlotStep(si, sti);
+        const lbl = steps[sti].label;
+        let stepPass = true;
+        
+        if (lbl.includes('Profile Picture')) stepPass = vResult.passedPfp;
+        if (lbl.includes('Bio')) stepPass = vResult.passedBio;
+        if (lbl.includes('Account Age')) stepPass = vResult.passedAge;
+        if (lbl.includes('Post Count')) stepPass = vResult.passedActivity;
+        if (lbl.includes('Checking Comment')) stepPass = vResult.passedComment;
+
+        const passed = await processSlotStep(si, sti, stepPass);
         if (!passed) { passedAll = false; break; }
       }
 
-      const currentUser = slotsRef.current[si].username;
       if (passedAll) {
-        finalizeSlot(si, currentUser);
-        verifiedUser = currentUser;
+        finalizeSlot(si, currentUser, vResult.avatarUrl);
+        verifiedUser = { username: currentUser, avatarUrl: vResult.avatarUrl };
       } else {
         const hasReplacement = await replaceSlot(si, currentUser);
         if (!hasReplacement) break;
@@ -154,16 +177,21 @@ export function useVerification({
     return verifiedUser;
   };
 
-  const completeDraw = async (verifiedUsernames: string[]) => {
+  const completeDraw = async (verifiedWinners: { username: string; avatarUrl: string }[]) => {
     setPhase('finalize');
     setSaving(true);
     
-    const allWinners = verifiedUsernames.map((username, i) => ({
-      username,
-      type: i < primaryCount ? ('primary' as const) : ('secondary' as const),
-      status: 'verified' as const,
-      avatarUrl: `https://unavatar.io/twitter/${username}`,
-    }));
+    const commentEnabled = buildSteps().some((s) => s.label.startsWith('Checking Comment'));
+
+    const allWinners = verifiedWinners.map((winner, i) => {
+      return {
+        username: winner.username,
+        type: i < primaryCount ? ('primary' as const) : ('secondary' as const),
+        status: 'verified' as const,
+        avatarUrl: winner.avatarUrl,
+        commentProofUrl: commentEnabled ? `https://x.com/search?q=from%3A${winner.username}%20conversation_id%3A${data.tweetId}&f=live` : undefined,
+      };
+    });
 
     // TODO:BACKEND — hostAvatarUrl and winner avatarUrl will come from the backend
     // scraper (sacrificial X account) instead of unavatar.io
@@ -174,11 +202,36 @@ export function useVerification({
         drawId,
         tweetId: data.tweetId || '',
         hostUsername: host,
-        hostAvatarUrl: host !== 'unknown' ? `https://unavatar.io/twitter/${host}` : undefined,
+        hostAvatarUrl: data.hostAvatarUrl,
         mode: data.mode || 'reposts',
         totalParticipants: participants.length,
+        participants: participants,
+        enabledFeatures: buildSteps().map(s => s.label.replace('Checking ', '').replace('...', '')),
+        engagementTasks: {
+          mustLike: configState.mustLike,
+          mustComment: configState.mustComment,
+          mustFollow: configState.mustFollow,
+          followUsernames: configState.followUsernames,
+          mustExternal: configState.mustExternal,
+          externalUrl: configState.externalUrl,
+          extMustLike: configState.extMustLike,
+          extMustRepost: configState.extMustRepost,
+          extMustComment: configState.extMustComment,
+          extMustQuote: configState.extMustQuote,
+        },
+        antiBotFilters: {
+          mustPfp: configState.mustPfp,
+          mustBio: configState.mustBio,
+          mustAge: configState.mustAge,
+          minMonths: configState.minMonths,
+          mustActivity: configState.mustActivity,
+          minPosts: configState.minPosts,
+        },
         winners: allWinners,
       });
+      
+      // Add a delay so users can celebrate the result before jumping to history
+      await delay(3500);
       router.push(`/history/x/${drawId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to finalize draw.');
@@ -191,16 +244,17 @@ export function useVerification({
     verificationStarted.current = true;
 
     const verifyAll = async () => {
-      const verifiedUsernames: string[] = [];
+      const verifiedWinners: { username: string; avatarUrl: string }[] = [];
       for (let si = 0; si < slotsRef.current.length; si++) {
         const user = await processSingleSlot(si);
-        if (user) verifiedUsernames.push(user);
+        if (user) verifiedWinners.push(user);
       }
-      await completeDraw(verifiedUsernames);
+      await completeDraw(verifiedWinners);
     };
 
     verifyAll();
     return () => { verificationStarted.current = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, slots.length]);
 
   return { slots, saving, handleRoll };

@@ -41,6 +41,7 @@ export default function HistoryDrawPage({ params }: { params: Promise<{ platform
   }, [id]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchStatus();
     document.title = `Historical Draw ${id.slice(0, 8)} | FairGiveaway.online`;
   }, [fetchStatus, id]);

@@ -33,12 +33,15 @@ export default function Avatar({ username, src, size = 'md' }: AvatarProps) {
 
   if (src && !imgError) {
     return (
-      <img
-        src={src}
-        alt={username}
-        onError={() => setImgError(true)}
-        className={`${dim} rounded-full shrink-0 object-cover border border-borderSubtle bg-bgElevated`}
-      />
+      <>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={username}
+          onError={() => setImgError(true)}
+          className={`${dim} rounded-full shrink-0 object-cover border border-borderSubtle bg-bgElevated`}
+        />
+      </>
     );
   }
 

@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { FaClockRotateLeft, FaXTwitter, FaFacebook, FaInstagram, FaTiktok, FaFileCsv } from 'react-icons/fa6';
-import { siteConfig } from '@/lib/shared';
 
 const PLATFORMS = [
   { id: 'x', name: 'X / Twitter', icon: FaXTwitter, active: true },
@@ -30,7 +29,7 @@ export default function HistoryHubPage() {
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PLATFORMS.map((platform, i) => {
+          {PLATFORMS.map((platform) => {
             const Icon = platform.icon;
             
             if (!platform.active) {

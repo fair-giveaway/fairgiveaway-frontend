@@ -1,4 +1,3 @@
-import { FaPlus, FaMinus } from 'react-icons/fa6';
 import Toggle from '../ui/Toggle';
 import SlideDown from '../ui/SlideDown';
 import Stepper from '../ui/Stepper';
@@ -57,33 +56,13 @@ export default function ConfigurationPhase(p: ConfigProps) {
           <ToggleRow id="t-like" label="Like post" checked={p.mustLike} onChange={p.setMustLike} />
           <ToggleRow id="t-comment" label="Comment on post" checked={p.mustComment} onChange={p.setMustComment} />
 
-          {/* Follow — spans full width */}
-          <div className="sm:col-span-2 p-2.5 rounded-xl border border-borderSubtle bg-bgBase">
+          {/* Follow — spans full width (Blurred due to X API limits) */}
+          <div className="sm:col-span-2 p-2.5 rounded-xl border border-borderSubtle bg-bgBase opacity-50 relative pointer-events-none">
             <div className="flex items-center justify-between">
-              <label htmlFor="t-follow" className="text-sm text-textSecondary cursor-pointer">Follow host / sponsors</label>
-              <Toggle checked={p.mustFollow} onChange={p.setMustFollow} id="t-follow" />
+              <label htmlFor="t-follow" className="text-sm text-textSecondary cursor-pointer">Follow host / sponsors (Disabled)</label>
+              <Toggle checked={false} onChange={() => {}} id="t-follow" />
             </div>
-            <SlideDown open={p.mustFollow} tall>
-              <div className="pt-2 border-t border-borderSubtle space-y-2">
-                {p.followUsernames.map((u, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <input
-                      type="text" value={u} placeholder="@username"
-                      onChange={(e) => { const n = [...p.followUsernames]; n[i] = e.target.value; p.setFollowUsernames(n); }}
-                      className="neo-input py-2 text-sm flex-1"
-                    />
-                    {p.followUsernames.length > 1 && (
-                      <button onClick={() => p.setFollowUsernames(p.followUsernames.filter((_, idx) => idx !== i))} className="h-9 w-9 shrink-0 flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors text-xs">
-                        <FaMinus />
-                      </button>
-                    )}
-                  </div>
-                ))}
-                <button onClick={() => p.setFollowUsernames([...p.followUsernames, ''])} className="text-xs font-semibold text-accentPrimary hover:text-accentPrimary/80 flex items-center gap-1">
-                  <FaPlus className="text-[10px]" /> Add sponsor
-                </button>
-              </div>
-            </SlideDown>
+            <p className="text-[10px] text-textMuted mt-1">Due to X&apos;s anti-scraping limits, verifying followers programmatically is currently not supported.</p>
           </div>
 
           {/* External interaction — spans full width */}

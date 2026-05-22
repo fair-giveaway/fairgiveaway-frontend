@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { FaBars, FaXmark } from 'react-icons/fa6';
 import { ThemeToggle } from './ThemeToggle';
-import { siteConfig } from '@/lib/shared';
 
 const NAV_LINKS = [
   { href: '/platforms', label: 'Platforms' },

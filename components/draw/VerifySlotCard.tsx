@@ -7,6 +7,7 @@ export default function VerifySlotCard({ slot, kind, index, participants = [] }:
 
   useEffect(() => {
     if (slot.status !== 'drawing' || participants.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayUsername(slot.username);
       return;
     }
