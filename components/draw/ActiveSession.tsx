@@ -55,6 +55,14 @@ export default function ActiveSession({ drawId, data }: Props) {
 
   const buildSteps = useCallback((): VerifyStep[] => {
     const steps: VerifyStep[] = [];
+    
+    // 1. Anti-Bot Filters First
+    if (mustPfp) steps.push({ label: 'PFP & Banner', status: 'pending' });
+    if (mustBio) steps.push({ label: 'Bio text', status: 'pending' });
+    if (mustAge) steps.push({ label: 'Account age', status: 'pending' });
+    if (mustActivity) steps.push({ label: 'Post count', status: 'pending' });
+
+    // 2. Engagement Tasks
     if (mustLike) steps.push({ label: 'Checking Like...', status: 'pending' });
     if (mustComment) steps.push({ label: 'Checking Comment...', status: 'pending' });
     if (mustFollow) {
@@ -70,10 +78,7 @@ export default function ActiveSession({ drawId, data }: Props) {
         steps.push({ label: 'External interaction', status: 'pending' });
       }
     }
-    if (mustPfp) steps.push({ label: 'PFP & Banner', status: 'pending' });
-    if (mustBio) steps.push({ label: 'Bio text', status: 'pending' });
-    if (mustAge) steps.push({ label: 'Account age', status: 'pending' });
-    if (mustActivity) steps.push({ label: 'Post count', status: 'pending' });
+    
     return steps;
   }, [mustLike, mustComment, mustFollow, followUsernames, mustExternal, externalUrl, extMustLike, extMustRepost, extMustComment, extMustQuote, mustPfp, mustBio, mustAge, mustActivity]);
 
@@ -121,7 +126,7 @@ export default function ActiveSession({ drawId, data }: Props) {
           <div className="neo-card p-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-textPrimary flex items-center gap-2">
-                <FaUserGroup className="text-accentPrimary text-xs" /> Eligible Entries
+                <FaUserGroup className="text-accentPrimary text-xs" /> Participants
               </h3>
               <span className="px-2 py-0.5 rounded-full bg-bgBase border border-borderSubtle text-xs font-bold text-textPrimary">
                 {participants.length}

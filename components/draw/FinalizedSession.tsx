@@ -1,9 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaLock, FaClipboard, FaCheck, FaXTwitter, FaClockRotateLeft } from 'react-icons/fa6';
+import { FaLock, FaClipboard, FaCheck, FaXTwitter, FaClockRotateLeft, FaCopy } from 'react-icons/fa6';
 import { type GiveawayDoc, getDrawsByTweetId } from '@/lib/api';
 import Avatar from '../ui/Avatar';
+
+function CopyableText({ text, className = "" }: { text: string; className?: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div 
+      onClick={handleCopy}
+      className={`inline-flex items-center gap-2 cursor-pointer group ${className}`}
+      title="Click to copy"
+    >
+      <span className="break-all">{text}</span>
+      <span className="shrink-0 text-textMuted group-hover:text-accentPrimary transition-colors">
+        {copied ? <FaCheck className="text-emerald-500" /> : <FaCopy />}
+      </span>
+    </div>
+  );
+}
 
 export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; drawId: string }) {
   const [copied, setCopied] = useState(false);
@@ -52,8 +75,8 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
       )}
 
       {/* Locked Banner */}
-      <div className="neo-card mb-10 p-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-bgBase border border-borderSubtle text-xl text-accentPrimary">
+      <div className="mb-10 text-center flex flex-col items-center">
+        <div className="mb-3 flex items-center justify-center text-xl text-accentPrimary">
           <FaLock />
         </div>
         <h2 className="text-xl font-bold text-textPrimary">
@@ -93,6 +116,12 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
               <span className="text-sm font-semibold capitalize text-textPrimary">{data.mode}</span>
             </div>
             <div>
+              <span className="neo-label-sm mb-2 block">Participants</span>
+              <span className="text-sm font-semibold text-textPrimary">
+                {data.totalParticipants ? data.totalParticipants.toLocaleString() : data.winners.length}
+              </span>
+            </div>
+            <div>
               <span className="neo-label-sm mb-2 block">Date Finalized</span>
               <span className="text-sm font-semibold text-textPrimary">
                 {new Date(data.createdAt).toLocaleDateString()}
@@ -101,9 +130,10 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
           </div>
 
           <div className="pt-6 border-t border-borderSubtle">
-            <p className="text-xs font-mono text-textSecondary break-all">
-              <strong className="text-textPrimary font-sans">Draw ID:</strong> {drawId}
-            </p>
+            <div className="text-xs font-mono text-textSecondary flex flex-col sm:flex-row sm:items-center gap-2">
+              <strong className="text-textPrimary font-sans shrink-0">Draw ID:</strong> 
+              <CopyableText text={drawId} className="hover:text-accentPrimary" />
+            </div>
           </div>
         </div>
 
@@ -169,6 +199,26 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
               {copied ? <FaCheck /> : <FaClipboard />}
               {copied ? 'Link Copied!' : 'Copy Verification Link'}
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tip Section */}
+      <div className="neo-card p-8 mb-8 text-center border-accentPrimary/30 bg-accentPrimary/5">
+        <h3 className="text-xl font-bold text-textPrimary mb-4 tracking-wider uppercase">
+          THANK YOU FOR USING FAIRGIVEAWAY!
+        </h3>
+        <p className="text-sm text-textSecondary mb-6 max-w-xl mx-auto">
+          If you found this tool helpful for running your giveaway, consider leaving a tip. Your support keeps the platform provably fair and free for everyone!
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col items-center p-4 bg-bgBase border border-borderStrong rounded-xl w-full sm:w-auto hover:border-accentPrimary/50 transition-colors">
+            <span className="text-xs font-bold uppercase tracking-wider text-textMuted mb-2">EVM Address</span>
+            <CopyableText text="0x6e9b40a8fe85e7dcff40cfc9aa526106fe8e0546" className="text-xs font-mono text-accentPrimary" />
+          </div>
+          <div className="flex flex-col items-center p-4 bg-bgBase border border-borderStrong rounded-xl w-full sm:w-auto hover:border-accentPrimary/50 transition-colors">
+            <span className="text-xs font-bold uppercase tracking-wider text-textMuted mb-2">Solana Address</span>
+            <CopyableText text="AnBiWNPW68djMF6ERBpueF8tWmcvHr6iCYzriXwGh9k6" className="text-xs font-mono text-accentPrimary" />
           </div>
         </div>
       </div>
