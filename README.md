@@ -10,7 +10,7 @@
 *   **Platform Integration:** Seamlessly fetch engagement data from social media platforms (starting with X/Twitter).
 *   **Flexible Configurations:** Set specific rules for giveaways (e.g., must follow host, minimum account age, exclude bots, must interact with external posts).
 *   **Live Draw Animation:** An engaging, suspenseful slot-machine style animation during the verification and selection process.
-*   **Verifiable History:** Results are calculated instantly and locked forever. Anyone can take the public Draw ID and independently verify the primary and secondary (backup) winners.
+*   **Verifiable History & Global Leaderboards:** Results are calculated instantly and locked forever. Anyone can take the public Draw ID and independently verify the primary and secondary (backup) winners. The system also tracks top giveaway hosts on a paginated global leaderboard.
 *   **Modern UI/UX:** A clean, responsive, and elegant "neo-brutalist" inspired dark-mode interface built with Tailwind CSS v4.
 
 ## 🛠️ Tech Stack

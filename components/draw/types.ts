@@ -6,7 +6,7 @@ export interface VerifyStep {
 export interface VerifySlot {
   username: string;
   steps: VerifyStep[];
-  status: 'verifying' | 'verified' | 'failed';
+  status: 'drawing' | 'verifying' | 'verified' | 'failed';
   redraws: number;
   commentProofUrl?: string;
 }

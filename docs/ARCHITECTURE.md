@@ -38,15 +38,21 @@ The core user journey consists of three main phases, managed by the `/platforms/
 *   **Session Storage:** We use `sessionStorage` (via `lib/api.ts`) to temporarily cache draw configuration data when transitioning between the initial setup page and the active draw session. This prevents data loss on a simple page reload during setup, but ensures the data is cleared once the draw is finalized.
 *   **Global/Server State:** When connected to the real backend, we will fetch history data and verify participants via API calls. Currently, this is mocked in `lib/api.ts`.
 
-### 4. Profile Photos and Rate Limiting
+### 4. Leaderboards & Data Pagination
+
+The application surfaces historical data through paginated views to maintain performance.
+*   **Leaderboards:** The platform aggregates verified draws to generate a global leaderboard (`/leaderboard/[platform]/page.tsx`). The top 3 hosts are given a distinct, visually distinct podium layout, while the rest are displayed sequentially.
+*   **Client-Side URL Pagination:** Both the History and Leaderboard views use Next.js `useSearchParams` (`?page=x`) coupled with `useMemo` for slicing the data. This provides standard URL routing, allowing users to deep-link directly into specific pages and ensuring the UI remains snappy.
+
+### 5. Profile Photos and Rate Limiting
 
 Handling profile photos (especially from platforms like X/Twitter) requires careful consideration of API rate limits.
 
 *   **During Animation:** To prevent spamming external avatar services (like `unavatar.io`) and hitting rate limits during the rapid slot animation, we use a lightweight `Avatar.tsx` component that generates a deterministic colored circle with the user's initial letter based on a hash of their username. This requires **zero network requests**.
-*   **Finalized State:** When the draw is finalized, the backend scraper (a sacrificial X account) is responsible for fetching the real `pbs.twimg.com` profile image URL. This permanent URL is saved in the database.
-*   **History Pages:** The history list and detail pages load the real profile photos from the saved URLs in the database. If a real photo fails to load (e.g., URL expired), the `Avatar` component gracefully falls back to the letter initial.
+*   **Finalized State & Leaderboards:** When the draw is finalized, the backend scraper (a sacrificial X account) is responsible for fetching the real `pbs.twimg.com` profile image URL. This permanent URL is saved in the database. The History and Leaderboards use this cached URL within the `Avatar` component.
+*   **Fallback Strategy:** If a real photo fails to load (e.g., URL expired), the `Avatar` component gracefully falls back to the letter initial.
 
-### 5. Styling and Design System
+### 6. Styling and Design System
 
 *   We use **Tailwind CSS** for all styling.
 *   A custom color palette (`bgBase`, `bgElevated`, `textPrimary`, `textSecondary`, `accentPrimary`, etc.) is defined in `tailwind.config.ts`.

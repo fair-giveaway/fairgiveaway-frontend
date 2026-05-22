@@ -49,6 +49,7 @@ export interface DrawStatusResult {
 
 export interface LeaderboardEntry {
   _id: string;
+  avatarUrl?: string;
   totalGiveaways: number;
   totalParticipants: number;
 }
@@ -267,12 +268,24 @@ export async function getDrawsByTweetId(tweetId: string): Promise<GiveawayDoc[]>
 }
 
 export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
-  // return apiFetch<LeaderboardEntry[]>('/api/x/giveaways/leaderboard');
-  return new Promise(resolve => setTimeout(() => resolve([
-    { _id: 'mrbeast', totalGiveaways: 42, totalParticipants: 1500000 },
-    { _id: 'elonmusk', totalGiveaways: 15, totalParticipants: 850000 },
-    { _id: 'vercel', totalGiveaways: 8, totalParticipants: 120000 },
-    { _id: 'isaacnewton123', totalGiveaways: 5, totalParticipants: 45000 },
-    { _id: 'nextjs', totalGiveaways: 3, totalParticipants: 15000 },
-  ]), 500));
+  return new Promise(resolve => setTimeout(() => {
+    const MOCK_HOSTS = [
+      'mrbeast', 'elonmusk', 'vercel', 'isaacnewton123', 'nextjs', 
+      'reactjs', 'tailwind', 'typescript', 'github', 'openai', 
+      'anthropic', 'google', 'apple', 'microsoft', 'amazon', 
+      'netflix', 'meta', 'spotify', 'figma', 'linear', 
+      'discord', 'slack', 'notion', 'arc', 'cursor'
+    ];
+    const extra = Array.from({length: 15}, (_, i) => `user_${i+100}`);
+    const allHosts = [...MOCK_HOSTS, ...extra];
+    
+    const entries = allHosts.map((host, i) => ({
+      _id: host,
+      avatarUrl: `https://unavatar.io/twitter/${host}`,
+      totalGiveaways: 50 - i + Math.floor(Math.random() * 5),
+      totalParticipants: 1000000 - i * 20000 + Math.floor(Math.random() * 10000)
+    })).sort((a, b) => b.totalGiveaways - a.totalGiveaways);
+    
+    resolve(entries);
+  }, 500));
 }

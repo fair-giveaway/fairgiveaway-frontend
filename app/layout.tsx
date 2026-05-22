@@ -10,6 +10,9 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 export const metadata: Metadata = {
   title: 'FairGiveaway',
   description: 'Provably fair giveaways backed by immutable public records.',
+  appleWebApp: {
+    title: 'FairGiveaway',
+  },
 };
 
 export default function RootLayout({

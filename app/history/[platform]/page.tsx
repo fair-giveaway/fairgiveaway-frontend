@@ -109,9 +109,9 @@ export default function PlatformHistoryPage({ params }: { params: Promise<{ plat
                       <span className="text-xs font-semibold bg-bgBase border border-borderStrong text-textPrimary px-3 py-1 rounded-full capitalize">
                         {draw.mode}
                       </span>
-                      <span className="text-xs font-semibold bg-accentPrimary/10 text-accentPrimary px-3 py-1 rounded-full flex items-center gap-1">
-                        <FaTrophy /> {draw.winners.length} Winners
-                      </span>
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accentPrimary/10 border border-accentPrimary/20 text-accentPrimary font-bold text-xs uppercase tracking-wide">
+                        <FaTrophy /> {draw.winners.length} {draw.winners.length === 1 ? 'Winner' : 'Winners'}
+                      </div>
                     </div>
                     
                     {draw.winners.length > 0 && (

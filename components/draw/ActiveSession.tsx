@@ -155,7 +155,7 @@ export default function ActiveSession({ drawId, data }: Props) {
               <ConfigurationPhase {...configProps} />
             </div>
           )}
-          <VerificationPhase phase={phase} slots={slots} primaryCount={primaryCount} saving={saving} />
+          <VerificationPhase phase={phase} slots={slots} primaryCount={primaryCount} saving={saving} participants={participants} />
           {phase !== 'configure' && error && <p className="mt-4 text-red-500 font-medium text-sm">{error}</p>}
         </div>
       </div>

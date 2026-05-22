@@ -1,26 +1,47 @@
+import { useState, useEffect } from 'react';
 import { type VerifySlot } from './types';
 import Avatar from '../ui/Avatar';
 
-export default function VerifySlotCard({ slot, kind, index }: { slot: VerifySlot; kind: 'primary' | 'secondary'; index: number }) {
+export default function VerifySlotCard({ slot, kind, index, participants = [] }: { slot: VerifySlot; kind: 'primary' | 'secondary'; index: number; participants?: string[] }) {
+  const [displayUsername, setDisplayUsername] = useState(slot.username);
+
+  useEffect(() => {
+    if (slot.status !== 'drawing' || participants.length === 0) {
+      setDisplayUsername(slot.username);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const randomUser = participants[Math.floor(Math.random() * participants.length)];
+      setDisplayUsername(randomUser);
+    }, 70);
+
+    return () => clearInterval(interval);
+  }, [slot.status, slot.username, participants]);
+
   const borderColor =
     slot.status === 'verified'
       ? 'border-l-4 border-l-emerald-500'
       : slot.status === 'failed'
       ? 'border-l-4 border-l-red-500'
+      : slot.status === 'drawing'
+      ? 'border-l-4 border-l-accentPrimary animate-pulse'
       : 'border-l-4 border-l-amber-400';
 
   return (
     <div className={`neo-card p-4 ${borderColor} animate-fade-in-up`}>
       <div className="flex items-start gap-4">
-        <Avatar username={slot.username} size="md" />
+        <div className={slot.status === 'drawing' ? 'blur-[1px] transition-all duration-75' : 'transition-all duration-300'}>
+          <Avatar username={displayUsername} size="md" />
+        </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span
               className={`text-sm font-bold ${
                 slot.status === 'failed' ? 'line-through text-textMuted' : 'text-textPrimary'
-              }`}
+              } ${slot.status === 'drawing' ? 'opacity-70 blur-[0.5px] transition-all duration-75' : 'transition-all duration-300'}`}
             >
-              @{slot.username}
+              @{displayUsername}
             </span>
             <span className="text-[11px] font-bold uppercase tracking-wide text-textMuted">
               {kind === 'primary' ? `Primary #${index + 1}` : `Backup #${index + 1}`}

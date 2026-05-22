@@ -61,7 +61,7 @@ export function useVerification({
     const initialSlots: VerifySlot[] = allCandidates.map((username) => ({
       username,
       steps: buildSteps(),
-      status: 'verifying' as const,
+      status: 'drawing' as const,
       redraws: 0,
     }));
 
@@ -111,16 +111,29 @@ export function useVerification({
     
     setSlots((prev) => {
       const next = [...prev];
-      next[si] = { username: replacement, steps: buildSteps(), status: 'verifying', redraws: next[si].redraws + 1 };
+      // Redraws also get the drawing animation
+      next[si] = { username: replacement, steps: buildSteps(), status: 'drawing', redraws: next[si].redraws + 1 };
       return next;
     });
     await delay(50);
     return true;
   };
 
-  const processSingleSlot = async (si: number): Promise<void> => {
-    let verified = false;
-    while (!verified) {
+  const processSingleSlot = async (si: number): Promise<string | null> => {
+    let verifiedUser: string | null = null;
+    while (!verifiedUser) {
+      // 1. Drawing Phase Delay
+      await delay(1500); // 1.5 seconds of spinning
+      
+      // Transition from 'drawing' to 'verifying'
+      setSlots((prev) => {
+        const next = [...prev];
+        if (next[si].status === 'drawing') {
+          next[si] = { ...next[si], status: 'verifying' };
+        }
+        return next;
+      });
+
       const steps = slotsRef.current[si].steps;
       let passedAll = true;
 
@@ -129,26 +142,27 @@ export function useVerification({
         if (!passed) { passedAll = false; break; }
       }
 
+      const currentUser = slotsRef.current[si].username;
       if (passedAll) {
-        finalizeSlot(si, slotsRef.current[si].username);
-        verified = true;
+        finalizeSlot(si, currentUser);
+        verifiedUser = currentUser;
       } else {
-        const hasReplacement = await replaceSlot(si, slotsRef.current[si].username);
-        if (!hasReplacement) verified = true;
+        const hasReplacement = await replaceSlot(si, currentUser);
+        if (!hasReplacement) break;
       }
     }
+    return verifiedUser;
   };
 
-  const completeDraw = async () => {
+  const completeDraw = async (verifiedUsernames: string[]) => {
     setPhase('finalize');
     setSaving(true);
     
-    const verifiedSlots = slotsRef.current.filter((s) => s.status === 'verified');
-    const allWinners = verifiedSlots.map((s, i) => ({
-      username: s.username,
+    const allWinners = verifiedUsernames.map((username, i) => ({
+      username,
       type: i < primaryCount ? ('primary' as const) : ('secondary' as const),
       status: 'verified' as const,
-      avatarUrl: `https://unavatar.io/twitter/${s.username}`,
+      avatarUrl: `https://unavatar.io/twitter/${username}`,
     }));
 
     // TODO:BACKEND — hostAvatarUrl and winner avatarUrl will come from the backend
@@ -177,10 +191,12 @@ export function useVerification({
     verificationStarted.current = true;
 
     const verifyAll = async () => {
+      const verifiedUsernames: string[] = [];
       for (let si = 0; si < slotsRef.current.length; si++) {
-        await processSingleSlot(si);
+        const user = await processSingleSlot(si);
+        if (user) verifiedUsernames.push(user);
       }
-      await completeDraw();
+      await completeDraw(verifiedUsernames);
     };
 
     verifyAll();
