@@ -11,9 +11,10 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-export default async function Image({ params }: { params: { platform: string; id: string } }) {
+export default async function Image(props: { params: Promise<{ platform: string; id: string }> }) {
+  const { platform, id } = await props.params;
   // Edge functions can fetch from our backend
-  const status = await getDrawStatus(params.id).catch(() => null);
+  const status = await getDrawStatus(id).catch(() => null);
 
   const winner = status?.data?.winners?.find((w) => w.status === 'verified');
   const host = status?.data?.hostUsername || 'Someone';
@@ -39,7 +40,7 @@ export default async function Image({ params }: { params: { platform: string; id
         >
           <img src={logoUrl} alt="Logo" width={100} height={100} style={{ marginBottom: 20 }} />
           <h1 style={{ fontSize: 60, fontWeight: 'bold' }}>FairGiveaway</h1>
-          <p style={{ fontSize: 30, color: '#a1a1aa' }}>Provably Fair Draws on {params.platform}</p>
+          <p style={{ fontSize: 30, color: '#a1a1aa' }}>Provably Fair Draws on {platform}</p>
         </div>
       ),
       { ...size }
@@ -125,7 +126,7 @@ export default async function Image({ params }: { params: { platform: string; id
         {/* Footer/Hash */}
         <div style={{ display: 'flex', position: 'absolute', bottom: 40, width: '100%', justifyContent: 'center' }}>
           <span style={{ fontSize: 20, color: '#475569', fontFamily: 'monospace' }}>
-            Draw ID: {params.id}
+            Draw ID: {id}
           </span>
         </div>
       </div>
