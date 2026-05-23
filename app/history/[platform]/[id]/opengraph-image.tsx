@@ -111,7 +111,7 @@ export default async function Image(props: { params: Promise<{ platform: string;
               borderRadius: '100px',
             }}
           >
-            <span style={{ color: '#4ade80', fontSize: 16, fontWeight: 600 }}>✓ Provably Fair</span>
+            <span style={{ color: '#4ade80', fontSize: 16, fontWeight: 600 }}>Provably Fair</span>
           </div>
         </div>
 
@@ -174,7 +174,7 @@ export default async function Image(props: { params: Promise<{ platform: string;
           {/* Winner card */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span style={{ fontSize: 14, color: '#4ade80', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 16 }}>
-              🎉 WINNER
+              WINNER
             </span>
             <div
               style={{
