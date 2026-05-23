@@ -43,9 +43,14 @@ export function Navbar() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
               <Image src="/logo.png" alt="FairGiveaway Logo" width={32} height={32} className="object-cover" />
             </div>
-            <span className="text-lg font-bold tracking-tight text-textPrimary">
-              FairGiveaway
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold tracking-tight text-textPrimary">
+                FairGiveaway
+              </span>
+              <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-bold uppercase tracking-wider border border-amber-500/20">
+                v1.0.0 Beta
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Nav */}

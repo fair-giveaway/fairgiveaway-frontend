@@ -43,7 +43,7 @@ export default function ActiveSession({ drawId, data }: Props) {
   const [mustPfp, setMustPfp] = useState(false);
   const [mustBio, setMustBio] = useState(false);
   const [mustAge, setMustAge] = useState(false);
-  const [minMonths, setMinMonths] = useState(3);
+  const [minMonths, setMinMonths] = useState(1);
   const [mustActivity, setMustActivity] = useState(false);
   const [minPosts, setMinPosts] = useState(10);
 

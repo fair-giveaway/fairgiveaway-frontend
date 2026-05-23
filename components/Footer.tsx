@@ -17,9 +17,14 @@ export function Footer() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden">
                 <Image src="/logo.png" alt="FairGiveaway Logo" width={32} height={32} className="object-cover" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-textPrimary">
-                FairGiveaway
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold tracking-tight text-textPrimary">
+                  FairGiveaway
+                </span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-bold uppercase tracking-wider border border-amber-500/20">
+                  v1.0.0 Beta
+                </span>
+              </div>
             </Link>
             <p className="text-textSecondary text-sm leading-relaxed mb-6">
               Provably fair, immutable giveaway platform. Transparent results for everyone.
@@ -65,10 +70,29 @@ export function Footer() {
           </div>
         </div>
         
-        <div className="mt-16 pt-8 border-t border-borderSubtle flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-textMuted">
-            &copy; {currentYear} FairGiveaway. Open source under MIT License.
+        <div className="mt-12 p-6 rounded-2xl bg-bgElevated border border-borderSubtle text-center">
+          <p className="text-sm text-textSecondary">
+            If you find a bug, have a feature request, or just want to discuss something, please report it to our{" "}
+            <a 
+              href="https://github.com/orgs/fair-giveaway/discussions" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-accentPrimary font-bold hover:underline"
+            >
+              GitHub Discussions
+            </a>!
           </p>
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-borderSubtle flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+            <p className="text-sm text-textMuted">
+              &copy; {currentYear} FairGiveaway. Open source under MIT License.
+            </p>
+            <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[10px] font-bold uppercase tracking-wider">
+              v1.0.0 Beta
+            </span>
+          </div>
           <div className="flex items-center gap-2 text-sm text-textMuted">
             Built by <a href="https://github.com/isaacnewton123" target="_blank" rel="noopener noreferrer" className="hover:text-accentPrimary transition-colors font-medium">Isaac Newton</a>
           </div>
