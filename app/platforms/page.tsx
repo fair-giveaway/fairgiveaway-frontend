@@ -13,7 +13,7 @@ const PLATFORMS = [
 
 export default function PlatformsHubPage() {
   return (
-    <div className="min-h-screen pt-32 pb-24">
+    <main className="min-h-screen pt-32 pb-24">
       <div className="neo-container max-w-5xl animate-fade-in-up">
         
         <header className="mb-16 text-center">
@@ -64,6 +64,6 @@ export default function PlatformsHubPage() {
         </div>
 
       </div>
-    </div>
+    </main>
   );
 }

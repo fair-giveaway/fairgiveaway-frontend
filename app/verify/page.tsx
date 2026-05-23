@@ -30,7 +30,7 @@ export default function VerifyPage() {
   }
 
   return (
-    <div className="min-h-screen pt-32 pb-24 flex flex-col items-center">
+    <main className="min-h-screen pt-32 pb-24 flex flex-col items-center">
       <div className="neo-container max-w-3xl animate-fade-in-up">
         
         <header className="mb-12 text-center">
@@ -77,6 +77,6 @@ export default function VerifyPage() {
         </div>
 
       </div>
-    </div>
+    </main>
   );
 }

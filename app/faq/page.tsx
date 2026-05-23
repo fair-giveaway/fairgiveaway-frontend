@@ -100,9 +100,27 @@ const faqCategories = [
   },
 ];
 
+// Build FAQPage JSON-LD from all categories
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqCategories.flatMap((cat) =>
+    cat.questions.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    }))
+  ),
+};
+
 export default function FaqPage() {
   return (
-    <main className="w-full pt-32 pb-20">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <main className="w-full pt-32 pb-20">
       <div className="neo-container max-w-4xl">
         <div className="text-center mb-16 animate-fade-in-up opacity-0">
           <span className="neo-label-sm text-accentPrimary mb-4 block">Support</span>
@@ -146,5 +164,6 @@ export default function FaqPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

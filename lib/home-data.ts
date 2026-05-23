@@ -97,3 +97,19 @@ export const webPageSchema = {
   "description": siteConfig.description,
   "url": siteConfig.url
 };
+
+export const webSiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "FairGiveaway",
+  "url": siteConfig.url,
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": `${siteConfig.url}/verify?q={search_term_string}`
+    },
+    "query-input": "required name=search_term_string"
+  }
+};
+

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { siteConfig } from '@/lib/shared';
-import { softwareAppSchema, faqSchema, breadcrumbSchema, webPageSchema } from '@/lib/home-data';
+import { softwareAppSchema, faqSchema, breadcrumbSchema, webPageSchema, webSiteSchema } from '@/lib/home-data';
 
 import { HomeHero } from '@/components/home/HomeHero';
 import { HomeFeaturesSection } from '@/components/home/HomeFeaturesSection';
@@ -31,6 +31,7 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }} />
 
       <main className="w-full pt-20">
         <HomeHero />

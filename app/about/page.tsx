@@ -36,9 +36,29 @@ const techStack = [
   { name: 'Docker', desc: 'Containerization' },
 ];
 
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'FairGiveaway',
+  url: siteConfig.url,
+  logo: `${siteConfig.url}/logo.png`,
+  description: 'An open-source, provably fair giveaway platform built for transparency and trust.',
+  sameAs: [
+    siteConfig.links.twitter,
+    siteConfig.links.github,
+  ],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    email: siteConfig.email,
+    contactType: 'customer support',
+  },
+};
+
 export default function AboutPage() {
   return (
-    <main className="w-full pt-32 pb-20">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+      <main className="w-full pt-32 pb-20">
       <div className="neo-container max-w-4xl">
         {/* Hero */}
         <div className="text-center mb-16 animate-fade-in-up opacity-0">
@@ -141,5 +161,6 @@ export default function AboutPage() {
         </section>
       </div>
     </main>
+    </>
   );
 }
