@@ -58,63 +58,76 @@ export default async function Image(props: { params: Promise<{ platform: string;
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           color: 'white',
           fontFamily: 'sans-serif',
-          padding: '60px 80px',
         }}
       >
-        {/* Top Section */}
-        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: 20 }}>
-          <span style={{ fontSize: 56, fontWeight: 'bold', color: 'white' }}>Official Winners 🎉</span>
+        {/* Top Logo */}
+        <div style={{ display: 'flex', position: 'absolute', top: 40, left: 40, alignItems: 'center' }}>
+          <img src={logoUrl} alt="Logo" width={50} height={50} style={{ marginRight: 15 }} />
+          <span style={{ fontSize: 24, fontWeight: 'bold', letterSpacing: '2px', color: '#a5b4fc' }}>
+            FAIRGIVEAWAY.ONLINE
+          </span>
         </div>
 
-        {/* Center Section (Winner) */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: -20 }}>
-          <img 
-            src={winnerAvatar} 
-            alt="Winner Avatar"
-            width={240} 
-            height={240} 
-            style={{ borderRadius: '50%', border: '6px solid #4ade80', boxShadow: '0 0 40px rgba(74, 222, 128, 0.4)' }} 
-          />
-          <h2 style={{ fontSize: 48, fontWeight: 'bold', marginTop: 24, color: '#4ade80' }}>@{winner.username}</h2>
+        {/* Verification Badge */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            background: 'rgba(34, 197, 94, 0.15)',
+            border: '2px solid rgba(34, 197, 94, 0.5)',
+            padding: '10px 24px',
+            borderRadius: '100px',
+            marginBottom: 40,
+          }}
+        >
+          <span style={{ color: '#4ade80', fontSize: 24, fontWeight: 'bold' }}>✓ Provably Fair Result</span>
         </div>
 
-        {/* Bottom Section */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
+        {/* Main Content Area */}
+        <div style={{ display: 'flex', width: '100%', padding: '0 80px', justifyContent: 'space-between', alignItems: 'center' }}>
           
-          {/* Hosted By */}
+          {/* Host Section */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: 24, color: '#94a3b8', marginBottom: 12 }}>Hosted By</span>
+            <p style={{ fontSize: 24, color: '#94a3b8', marginBottom: 20 }}>Hosted by</p>
             <img 
               src={hostAvatar} 
               alt="Host Avatar"
-              width={100} 
-              height={100} 
-              style={{ borderRadius: '50%', border: '4px solid #334155', marginBottom: 12 }} 
+              width={160} 
+              height={160} 
+              style={{ borderRadius: '50%', border: '4px solid #334155' }} 
             />
-            <span style={{ fontSize: 28, color: 'white', fontWeight: '500' }}>@{host}</span>
+            <h2 style={{ fontSize: 36, marginTop: 20 }}>@{host}</h2>
           </div>
 
-          {/* ID */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBottom: 10 }}>
-            <span style={{ fontSize: 24, color: '#475569', fontFamily: 'monospace' }}>id: {id}</span>
+          {/* Center Text & Arrow */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 80 }}>
+            <span style={{ fontSize: 40, color: '#a5b4fc' }}>🎉 WINNER 🎉</span>
+            <span style={{ fontSize: 60, marginTop: -20, color: '#4f46e5' }}>→</span>
           </div>
 
-          {/* Powered By */}
+          {/* Winner Section */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: 24, color: '#94a3b8', marginBottom: 12 }}>powered by</span>
+            <p style={{ fontSize: 24, color: '#94a3b8', marginBottom: 20 }}>Selected Winner</p>
             <img 
-              src={logoUrl} 
-              alt="Logo"
-              width={100} 
-              height={100} 
-              style={{ marginBottom: 12 }} 
+              src={winnerAvatar} 
+              alt="Winner Avatar"
+              width={220} 
+              height={220} 
+              style={{ borderRadius: '50%', border: '6px solid #4ade80', boxShadow: '0 0 40px rgba(74, 222, 128, 0.4)' }} 
             />
-            <span style={{ fontSize: 28, color: 'white', fontWeight: '500' }}>@fairgiveaway</span>
+            <h2 style={{ fontSize: 48, fontWeight: 'bold', marginTop: 20, color: '#4ade80' }}>@{winner.username}</h2>
           </div>
+          
+        </div>
 
+        {/* Footer/Hash */}
+        <div style={{ display: 'flex', position: 'absolute', bottom: 40, width: '100%', justifyContent: 'center' }}>
+          <span style={{ fontSize: 20, color: '#475569', fontFamily: 'monospace' }}>
+            Draw ID: {id}
+          </span>
         </div>
       </div>
     ),
