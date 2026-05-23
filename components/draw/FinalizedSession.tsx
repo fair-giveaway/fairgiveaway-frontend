@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaLock, FaClipboard, FaCheck, FaXTwitter, FaClockRotateLeft, FaCopy } from 'react-icons/fa6';
+import { FaLock, FaClipboard, FaCheck, FaClockRotateLeft, FaCopy, FaQuoteRight, FaCommentDots } from 'react-icons/fa6';
 import { type GiveawayDoc, getDrawsByTweetId } from '@/lib/api';
 import Avatar from '../ui/Avatar';
 
@@ -46,21 +46,31 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const shareToX = () => {
+  const generateShareText = () => {
     const url = window.location.href;
-    const primary = data.winners.filter(w => w.type === 'primary');
-    
+    const primary = data.winners.filter(w => w.type === 'primary' && w.status !== 'failed');
     let text = `The giveaway winners have been drawn fairly using fairgiveaway.online! 🎯🎉\n\nVerified Winners:\n`;
     primary.forEach((w, i) => {
       text += `${i + 1}. @${w.username}\n`;
     });
     text += `\nCheck the full verification proof here: ${url}`;
-    
-    window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+    return encodeURIComponent(text);
   };
 
-  const primaryWinners = data.winners.filter(w => w.type === 'primary');
-  const secondaryWinners = data.winners.filter(w => w.type === 'secondary');
+  const shareToXAsQuote = () => {
+    const text = generateShareText();
+    const quoteUrl = encodeURIComponent(`https://x.com/i/status/${data.tweetId}`);
+    window.open(`https://x.com/intent/tweet?text=${text}&url=${quoteUrl}`, '_blank');
+  };
+
+  const shareToXAsComment = () => {
+    const text = generateShareText();
+    window.open(`https://x.com/intent/tweet?in_reply_to=${data.tweetId}&text=${text}`, '_blank');
+  };
+
+  const primaryWinners = data.winners.filter(w => w.type === 'primary' && w.status !== 'failed');
+  const secondaryWinners = data.winners.filter(w => w.type === 'secondary' && w.status !== 'failed');
+  const rejectedUsers = data.winners.filter(w => w.status === 'failed');
 
   const hasNewFeatures = !!data.engagementTasks || !!data.antiBotFilters;
   const hasLegacyFeatures = data.enabledFeatures && data.enabledFeatures.length > 0;
@@ -309,14 +319,21 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
               </div>
             ))}
           </div>
-
           <div className="mt-8 space-y-3">
-            <button
-              onClick={shareToX}
-              className="neo-button-primary w-full h-14 text-base gap-2 font-bold"
-            >
-              <FaXTwitter /> Share Results to X
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={shareToXAsQuote}
+                className="neo-button-primary w-full h-14 text-sm gap-2 font-bold"
+              >
+                <FaQuoteRight /> Share to Quote
+              </button>
+              <button
+                onClick={shareToXAsComment}
+                className="neo-button-primary w-full h-14 text-sm gap-2 font-bold"
+              >
+                <FaCommentDots /> Share as Comment
+              </button>
+            </div>
             <button
               onClick={copyUrl}
               className="neo-button-primary w-full h-14 gap-2 bg-transparent border-2 border-borderStrong text-textPrimary hover:border-accentPrimary hover:text-accentPrimary hover:bg-bgBase shadow-none"
@@ -333,6 +350,40 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
         </div>
       </div>
       </div>
+
+      {/* Rejected Users */}
+      {rejectedUsers.length > 0 && (
+        <div className="neo-card p-8 mb-8 border-red-500/30">
+          <div className="flex items-center justify-between mb-6 border-b border-borderSubtle pb-4">
+            <h3 className="text-xl font-bold text-textPrimary flex items-center gap-2">
+              <span className="text-red-500">✕</span> Rejected Candidates
+            </h3>
+            <span className="text-xs uppercase font-bold px-3 py-1.5 rounded-full bg-red-500/15 text-red-500">
+              {rejectedUsers.length} total
+            </span>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto md:max-h-none md:overflow-visible pr-2 md:pr-0 styled-scrollbar">
+            {rejectedUsers.map((w, i) => (
+              <div 
+                key={i}
+                className="flex items-start gap-4 p-4 rounded-xl border border-red-500/30 bg-red-500/5 opacity-80"
+              >
+                <Avatar username={w.username} src={w.avatarUrl} size="md" />
+                <div className="flex flex-col flex-1">
+                  <span className="font-semibold text-textSecondary leading-tight line-through">
+                    @{w.username}
+                  </span>
+                  <div className="mt-2 text-xs font-medium text-red-500/80 bg-red-500/10 px-2 py-1.5 rounded-md inline-block">
+                    <span className="block text-[10px] uppercase tracking-wider mb-0.5 opacity-80">Reason for rejection</span>
+                    {w.failReason || "Failed Verification"}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Enabled Features Box (Mobile Only) */}
       <div className="neo-card p-8 h-fit block md:hidden mb-8">
@@ -382,7 +433,7 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
                   <span className="text-xs text-textSecondary">{new Date(past.createdAt).toLocaleString()}</span>
                 </div>
                 <div className="text-xs text-textSecondary truncate">
-                  Winners: {past.winners.map(w => `@${w.username}`).join(', ')}
+                  Winners: {past.winners.filter(w => w.status !== 'failed').map(w => `@${w.username}`).join(', ')}
                 </div>
               </a>
             ))}

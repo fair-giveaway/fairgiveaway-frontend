@@ -40,6 +40,7 @@ export function useVerification({
   const slotsRef = useRef<VerifySlot[]>([]);
   const [saving, setSaving] = useState(false);
   const verificationStarted = useRef(false);
+  const failedCandidatesRef = useRef<{ username: string; avatarUrl: string; failReason: string }[]>([]);
 
   useEffect(() => { poolRef.current = pool; }, [pool]);
   useEffect(() => { slotsRef.current = slots; }, [slots]);
@@ -151,25 +152,43 @@ export function useVerification({
 
       const steps = slotsRef.current[si].steps;
       let passedAll = true;
+      let failedStepLabel = "";
 
       for (let sti = 0; sti < steps.length; sti++) {
         const lbl = steps[sti].label;
         let stepPass = true;
         
-        if (lbl.includes('Profile Picture')) stepPass = vResult.passedPfp;
-        if (lbl.includes('Bio')) stepPass = vResult.passedBio;
-        if (lbl.includes('Account Age')) stepPass = vResult.passedAge;
-        if (lbl.includes('Post Count')) stepPass = vResult.passedActivity;
-        if (lbl.includes('Checking Comment')) stepPass = vResult.passedComment;
+        const lblLower = lbl.toLowerCase();
+        if (lblLower.includes('pfp')) {
+          stepPass = vResult.passedPfp;
+          if (!stepPass) failedStepLabel = "Missing Profile Picture or Banner";
+        } else if (lblLower.includes('bio')) {
+          stepPass = vResult.passedBio;
+          if (!stepPass) failedStepLabel = "Bio text is missing or empty";
+        } else if (lblLower.includes('account age')) {
+          stepPass = vResult.passedAge;
+          if (!stepPass) failedStepLabel = `Account too new: ${vResult.actualAgeMonths || 0} months old (Requires ${configState.minMonths || 1})`;
+        } else if (lblLower.includes('post count')) {
+          stepPass = vResult.passedActivity;
+          if (!stepPass) failedStepLabel = `Insufficient posts: ${vResult.actualPosts || 0} posts (Requires ${configState.minPosts || 1})`;
+        } else if (lblLower.includes('checking comment')) {
+          stepPass = vResult.passedComment;
+          if (!stepPass) failedStepLabel = "Comment not found on target post";
+        }
 
         const passed = await processSlotStep(si, sti, stepPass);
-        if (!passed) { passedAll = false; break; }
+        if (!passed) { 
+          passedAll = false; 
+          failedStepLabel = lbl;
+          break; 
+        }
       }
 
       if (passedAll) {
         finalizeSlot(si, currentUser, vResult.avatarUrl);
         verifiedUser = { username: currentUser, avatarUrl: vResult.avatarUrl };
       } else {
+        failedCandidatesRef.current.push({ username: currentUser, avatarUrl: vResult.avatarUrl, failReason: failedStepLabel });
         const hasReplacement = await replaceSlot(si, currentUser);
         if (!hasReplacement) break;
       }
@@ -196,6 +215,16 @@ export function useVerification({
     // TODO:BACKEND — hostAvatarUrl and winner avatarUrl will come from the backend
     // scraper (sacrificial X account) instead of unavatar.io
     const host = data.hostUsername || 'unknown';
+
+    const allFailed = failedCandidatesRef.current.map((failed) => ({
+      username: failed.username,
+      type: 'primary' as const,
+      status: 'failed' as const,
+      avatarUrl: failed.avatarUrl,
+      failReason: failed.failReason,
+    }));
+
+    const finalParticipants = [...allWinners, ...allFailed];
 
     try {
       await saveDraw({
@@ -227,7 +256,7 @@ export function useVerification({
           mustActivity: configState.mustActivity,
           minPosts: configState.minPosts,
         },
-        winners: allWinners,
+        winners: finalParticipants,
       });
       
       // Add a delay so users can celebrate the result before jumping to history

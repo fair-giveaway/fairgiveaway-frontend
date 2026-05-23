@@ -65,13 +65,13 @@ export default function ConfigurationPhase(p: ConfigProps) {
             <p className="text-[10px] text-textMuted mt-1">Due to X&apos;s anti-scraping limits, verifying followers programmatically is currently not supported.</p>
           </div>
 
-          {/* External interaction — spans full width */}
-          <div className="sm:col-span-2 p-2.5 rounded-xl border border-borderSubtle bg-bgBase">
+          {/* External interaction — spans full width (Under development) */}
+          <div className="sm:col-span-2 p-2.5 rounded-xl border border-borderSubtle bg-bgBase opacity-50 relative pointer-events-none">
             <div className="flex items-center justify-between">
-              <label htmlFor="t-external" className="text-sm text-textSecondary cursor-pointer">External post interaction</label>
-              <Toggle checked={p.mustExternal} onChange={p.setMustExternal} id="t-external" />
+              <label htmlFor="t-external" className="text-sm text-textSecondary cursor-pointer">External post interaction (Under development)</label>
+              <Toggle checked={false} onChange={() => {}} id="t-external" />
             </div>
-            <SlideDown open={p.mustExternal} tall>
+            {/* <SlideDown open={p.mustExternal} tall>
               <div className="pt-2 border-t border-borderSubtle space-y-2.5">
                 <input
                   type="text" value={p.externalUrl} placeholder="https://x.com/sponsor/status/..."
@@ -85,7 +85,7 @@ export default function ConfigurationPhase(p: ConfigProps) {
                   <ToggleRow id="e-quote" label="Quote" checked={p.extMustQuote} onChange={p.setExtMustQuote} />
                 </div>
               </div>
-            </SlideDown>
+            </SlideDown> */}
           </div>
         </div>
       </div>

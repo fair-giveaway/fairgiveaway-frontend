@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FaXTwitter, FaClockRotateLeft, FaTrophy, FaArrowRight } from 'react-icons/fa6';
+import { FaXTwitter, FaClockRotateLeft, FaTrophy, FaArrowRight, FaRetweet, FaHeart } from 'react-icons/fa6';
 import { initDraw } from '@/lib/api';
 import InteractiveLoadingModal from '@/components/ui/InteractiveLoadingModal';
 
@@ -28,6 +28,7 @@ const SUB_NAV = [
 export default function XHubPage() {
   const router = useRouter();
   const [postUrl, setPostUrl] = useState('');
+  const [mode, setMode] = useState<'reposts' | 'likes'>('reposts');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
@@ -51,7 +52,7 @@ export default function XHubPage() {
     setError('');
     
     try {
-      const res = await initDraw(tweetId, 'reposts', host);
+      const res = await initDraw(tweetId, mode, host);
       setModalSuccess(true);
       setTimeout(() => {
         router.push(`/platforms/x/draw/${res.drawId}`);
@@ -105,8 +106,36 @@ export default function XHubPage() {
                 className="neo-input"
               />
               <p className="mt-3 text-xs text-textMuted leading-relaxed">
-                💡 Note: To maintain peak performance, the system initially fetches the main participant list from the primary interaction (e.g., Reposts/Shares). Additional verification tasks and anti-bot filters can be configured on the next screen.
+                💡 Note: For optimal performance, the system first retrieves the primary list of participants based on your selected interaction ({mode === 'reposts' ? 'Reposts' : 'Likes'}). You can configure advanced anti-bot filters and additional verification tasks on the next step.
               </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-textPrimary mb-3">
+                Primary Scrape Target
+              </label>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setMode('reposts')}
+                  className={`flex-1 py-3 px-4 rounded-xl font-medium border flex items-center justify-center gap-2 transition-all ${
+                    mode === 'reposts' 
+                      ? 'bg-accentPrimary text-white border-accentPrimary shadow-[0_0_15px_rgba(var(--accent-primary-rgb),0.3)]' 
+                      : 'bg-bgElevated border-borderSubtle text-textSecondary hover:border-accentPrimary/50 hover:text-textPrimary'
+                  }`}
+                >
+                  <FaRetweet /> Reposts
+                </button>
+                <button
+                  onClick={() => setMode('likes')}
+                  className={`flex-1 py-3 px-4 rounded-xl font-medium border flex items-center justify-center gap-2 transition-all ${
+                    mode === 'likes' 
+                      ? 'bg-accentPrimary text-white border-accentPrimary shadow-[0_0_15px_rgba(var(--accent-primary-rgb),0.3)]' 
+                      : 'bg-bgElevated border-borderSubtle text-textSecondary hover:border-accentPrimary/50 hover:text-textPrimary'
+                  }`}
+                >
+                  <FaHeart /> Likes
+                </button>
+              </div>
             </div>
 
             <button

@@ -36,6 +36,7 @@ export interface Winner {
    *  Current mock uses unavatar.io as a temporary placeholder. */
   avatarUrl?: string;
   commentProofUrl?: string;
+  failReason?: string;
 }
 
 export interface GiveawayDoc {
@@ -162,6 +163,8 @@ export interface VerifyResult {
   passedAge: boolean;
   passedActivity: boolean;
   passedComment: boolean;
+  actualAgeMonths?: number;
+  actualPosts?: number;
 }
 
 export async function verifyCandidate(username: string, tweetId: string, config: GiveawayConfig): Promise<VerifyResult> {

@@ -162,6 +162,12 @@ export default function ActiveSession({ drawId, data }: Props) {
               <ConfigurationPhase {...configProps} />
             </div>
           )}
+          {phase !== 'configure' && (
+            <div className="mb-5 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm font-medium flex items-center gap-3 animate-fade-in">
+              <span className="text-lg">⚠️</span>
+              Please do not exit or refresh this page. Doing so will interrupt the live session and the verification process will need to be restarted.
+            </div>
+          )}
           <VerificationPhase phase={phase} slots={slots} primaryCount={primaryCount} saving={saving} participants={participants} />
           {phase !== 'configure' && error && <p className="mt-4 text-red-500 font-medium text-sm">{error}</p>}
         </div>

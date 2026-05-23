@@ -151,6 +151,13 @@ export default function InteractiveLoadingModal({
           )}
         </div>
 
+        {/* Warning Note */}
+        {!isError && !isSuccess && (
+          <div className="mt-2 text-xs font-semibold text-orange-400/90 flex items-center justify-center gap-2 animate-fade-in">
+            <span>⚠️</span> Please do not exit or refresh the page.
+          </div>
+        )}
+
         {/* Close button only on error */}
         {isError && (
           <button
