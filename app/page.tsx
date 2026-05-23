@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     url: siteConfig.url,
     title: siteConfig.title,
     description: siteConfig.description,
+    images: ['/og-image.webp'],
   },
 };
 
