@@ -12,9 +12,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const status = await getDrawStatus(id);
 
     // If we have winner data
-    if (status?.data?.winners && status.data.winners.length > 0) {
-      const winner = status.data.winners[0];
-      const host = status.data.hostUsername || 'Someone';
+    const verifiedWinner = status?.data?.winners?.find((w) => w.status === 'verified');
+    if (verifiedWinner) {
+      const winner = verifiedWinner;
+      const host = status?.data?.hostUsername || 'Someone';
 
       return {
         title: `Giveaway Winner: @${winner.username}`,

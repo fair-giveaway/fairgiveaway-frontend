@@ -15,7 +15,7 @@ export default async function Image({ params }: { params: { platform: string; id
   // Edge functions can fetch from our backend
   const status = await getDrawStatus(params.id).catch(() => null);
 
-  const winner = status?.data?.winners?.[0];
+  const winner = status?.data?.winners?.find((w) => w.status === 'verified');
   const host = status?.data?.hostUsername || 'Someone';
   const hostAvatar = status?.data?.hostAvatarUrl || `https://unavatar.io/twitter/${host}`;
   const winnerAvatar = winner?.avatarUrl || `https://unavatar.io/twitter/${winner?.username || 'unknown'}`;
