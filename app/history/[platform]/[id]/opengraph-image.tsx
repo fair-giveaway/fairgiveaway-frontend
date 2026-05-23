@@ -90,7 +90,7 @@ export default async function Image(props: { params: Promise<{ platform: string;
         </div>
 
         {/* ── Header ── */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', zIndex: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <img src={logoUrl} alt="Logo" width={44} height={44} style={{ borderRadius: 8, marginRight: 16 }} />
             <span style={{ fontSize: 28, fontWeight: 700, color: '#e2e8f0', letterSpacing: '-0.5px' }}>
@@ -127,7 +127,6 @@ export default async function Image(props: { params: Promise<{ platform: string;
             justifyContent: 'center',
             flex: 1,
             marginTop: -20,
-            zIndex: 10,
           }}
         >
           <div style={{ fontSize: 20, fontWeight: 700, color: '#4ade80', textTransform: 'uppercase', letterSpacing: '4px', marginBottom: 32 }}>
@@ -166,7 +165,7 @@ export default async function Image(props: { params: Promise<{ platform: string;
         </div>
 
         {/* ── Footer Info ── */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%', zIndex: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
           {/* Left: Hosted By Pill */}
           <div
             style={{
