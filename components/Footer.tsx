@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaGithub, FaXTwitter, FaGlobe } from 'react-icons/fa6';
+import { FaGithub, FaXTwitter, FaEnvelope } from 'react-icons/fa6';
 import { siteConfig } from '@/lib/shared';
 
 export function Footer() {
@@ -33,11 +33,11 @@ export function Footer() {
               <a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer" className="text-textMuted hover:text-textPrimary transition-colors" aria-label="GitHub">
                 <FaGithub className="text-xl" />
               </a>
-              <a href="https://x.com/isaac_newton252" target="_blank" rel="noopener noreferrer" className="text-textMuted hover:text-textPrimary transition-colors" aria-label="X (Twitter)">
+              <a href={siteConfig.links.twitter} target="_blank" rel="noopener noreferrer" className="text-textMuted hover:text-textPrimary transition-colors" aria-label="X (Twitter)">
                 <FaXTwitter className="text-xl" />
               </a>
-              <a href="https://fairgiveaway.online" target="_blank" rel="noopener noreferrer" className="text-textMuted hover:text-textPrimary transition-colors" aria-label="Website">
-                <FaGlobe className="text-xl" />
+              <a href={`mailto:${siteConfig.email}`} className="text-textMuted hover:text-textPrimary transition-colors" aria-label="Email">
+                <FaEnvelope className="text-xl" />
               </a>
             </div>
           </div>
@@ -55,9 +55,11 @@ export function Footer() {
           <div>
             <h3 className="neo-label-sm mb-5">Resources</h3>
             <ul className="space-y-4">
-              <li><a href={siteConfig.links.frontend} target="_blank" rel="noopener noreferrer" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Frontend Repository</a></li>
-              <li><a href={siteConfig.links.backend} target="_blank" rel="noopener noreferrer" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Backend Repository</a></li>
-              <li><Link href="/#faq" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">FAQ</Link></li>
+              <li><Link href="/about" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">About Us</Link></li>
+              <li><Link href="/docs" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Documentation</Link></li>
+              <li><Link href="/faq" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">FAQ</Link></li>
+              <li><Link href="/contact" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Contact</Link></li>
+              <li><a href={siteConfig.links.discussions} target="_blank" rel="noopener noreferrer" className="text-textSecondary hover:text-textPrimary text-sm transition-colors">Discussions</a></li>
             </ul>
           </div>
           
@@ -74,7 +76,7 @@ export function Footer() {
           <p className="text-sm text-textSecondary">
             If you find a bug, have a feature request, or just want to discuss something, please report it to our{" "}
             <a 
-              href="https://github.com/orgs/fair-giveaway/discussions" 
+              href={siteConfig.links.discussions}
               target="_blank" 
               rel="noopener noreferrer"
               className="text-accentPrimary font-bold hover:underline"

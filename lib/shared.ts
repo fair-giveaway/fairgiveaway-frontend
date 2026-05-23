@@ -4,10 +4,13 @@ export const siteConfig = {
   url: 'https://fairgiveaway.online',
   ogImage: '/og-image.png',
   tagline: 'Trust Built into the Code',
+  email: 'support@fairgiveaway.online',
   links: {
-    twitter: 'https://x.com/isaac_newton252',
+    twitter: 'https://x.com/FairGiveaway',
     github: 'https://github.com/fair-giveaway',
     frontend: 'https://github.com/fair-giveaway/fairgiveaway-frontend',
     backend: 'https://github.com/fair-giveaway/fairgiveaway-backend',
+    discussions: 'https://github.com/orgs/fair-giveaway/discussions',
+    apiDocs: 'https://api.fairgiveaway.online/docs',
   },
 };
