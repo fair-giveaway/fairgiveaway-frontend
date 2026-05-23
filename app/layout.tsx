@@ -16,11 +16,20 @@ export const metadata: Metadata = {
     description: 'Provably fair giveaways backed by immutable public records.',
     siteName: 'FairGiveaway',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.webp',
+        width: 1200,
+        height: 630,
+        alt: 'FairGiveaway',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'FairGiveaway',
     description: 'Provably fair giveaways backed by immutable public records.',
+    images: ['/og-image.webp'],
   },
   appleWebApp: {
     title: 'FairGiveaway',
