@@ -28,7 +28,7 @@ export default async function Image(props: { params: Promise<{ platform: string;
       (
         <div
           style={{
-            background: 'linear-gradient(to bottom right, #09090b, #18181b)',
+            background: 'linear-gradient(145deg, #0f172a 0%, #020617 100%)',
             width: '100%',
             height: '100%',
             display: 'flex',
@@ -40,51 +40,85 @@ export default async function Image(props: { params: Promise<{ platform: string;
         >
           <img src={logoUrl} alt="Logo" width={100} height={100} style={{ marginBottom: 20 }} />
           <h1 style={{ fontSize: 60, fontWeight: 'bold' }}>FairGiveaway</h1>
-          <p style={{ fontSize: 30, color: '#a1a1aa' }}>Provably Fair Draws on {platform}</p>
+          <p style={{ fontSize: 30, color: '#94a3b8' }}>Provably Fair Draws on {platform}</p>
         </div>
       ),
       { ...size }
     );
   }
 
-  // The sleek winner announcement image
+  // Premium Winner Announcement
   return new ImageResponse(
     (
       <div
         style={{
-          background: 'linear-gradient(135deg, #09090b 0%, #1e1b4b 100%)',
+          display: 'flex',
           width: '100%',
           height: '100%',
-          display: 'flex',
+          background: 'linear-gradient(145deg, #0f172a 0%, #020617 100%)',
           flexDirection: 'column',
-          color: 'white',
+          color: '#ffffff',
           fontFamily: 'sans-serif',
           position: 'relative',
+          overflow: 'hidden',
+          padding: '48px 64px',
         }}
       >
-        {/* ── Top Bar ── */}
-        <div
-          style={{
-            display: 'flex',
-            width: '100%',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '24px 40px',
-            background: 'rgba(0,0,0,0.5)',
-          }}
-        >
-          {/* Left: logo + name */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img src={logoUrl} alt="Logo" width={36} height={36} style={{ marginRight: 12 }} />
-            <span style={{ fontSize: 22, fontWeight: 'bold', color: '#a5b4fc' }}>@fairgiveaway</span>
-          </div>
-          {/* Right: tagline */}
-          <span style={{ fontSize: 20, fontWeight: 'bold', color: '#a5b4fc', letterSpacing: '1px' }}>
-            Provably Fair
-          </span>
+        {/* ── Ambient Glows (SVG radial gradients, Satori-safe) ── */}
+        <div style={{ position: 'absolute', top: -200, left: -100, display: 'flex' }}>
+          <svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="glow1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                <stop offset="0%" stopColor="rgba(99, 102, 241, 0.4)" />
+                <stop offset="100%" stopColor="rgba(99, 102, 241, 0)" />
+              </radialGradient>
+            </defs>
+            <circle cx="300" cy="300" r="300" fill="url(#glow1)" />
+          </svg>
         </div>
 
-        {/* ── Main Content ── */}
+        <div style={{ position: 'absolute', top: 65, left: 350, display: 'flex' }}>
+          <svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="glow2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                <stop offset="0%" stopColor="rgba(34, 197, 94, 0.3)" />
+                <stop offset="100%" stopColor="rgba(34, 197, 94, 0)" />
+              </radialGradient>
+            </defs>
+            <circle cx="250" cy="250" r="250" fill="url(#glow2)" />
+          </svg>
+        </div>
+
+        {/* ── Header ── */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', zIndex: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={logoUrl} alt="Logo" width={44} height={44} style={{ borderRadius: 8, marginRight: 16 }} />
+            <span style={{ fontSize: 28, fontWeight: 700, color: '#e2e8f0', letterSpacing: '-0.5px' }}>
+              FairGiveaway
+            </span>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              padding: '10px 20px',
+              borderRadius: 99,
+              fontSize: 18,
+              fontWeight: 600,
+              color: '#818cf8',
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: 10 }}>
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>
+            Provably Fair
+          </div>
+        </div>
+
+        {/* ── Main Hero (Winner) ── */}
         <div
           style={{
             display: 'flex',
@@ -92,79 +126,81 @@ export default async function Image(props: { params: Promise<{ platform: string;
             alignItems: 'center',
             justifyContent: 'center',
             flex: 1,
-            padding: '0 60px',
+            marginTop: -20,
+            zIndex: 10,
           }}
         >
-          {/* Title */}
-          <h1 style={{ fontSize: 52, fontWeight: 'bold', marginBottom: 30, marginTop: 0 }}>
-            Official Winners 🎉
-          </h1>
+          <div style={{ fontSize: 20, fontWeight: 700, color: '#4ade80', textTransform: 'uppercase', letterSpacing: '4px', marginBottom: 32 }}>
+            🎉 Official Winner
+          </div>
 
-          {/* Winner Avatar — large, centered */}
-          <img
-            src={winnerAvatar}
-            alt="Winner Avatar"
-            width={180}
-            height={180}
+          {/* Avatar with gradient ring */}
+          <div
             style={{
-              borderRadius: '50%',
-              border: '6px solid #4ade80',
-              boxShadow: '0 0 50px rgba(74, 222, 128, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 200,
+              height: 200,
+              borderRadius: 100,
+              background: 'linear-gradient(135deg, #4ade80 0%, #3b82f6 100%)',
+              marginBottom: 24,
             }}
-          />
-          <h2 style={{ fontSize: 40, fontWeight: 'bold', color: '#4ade80', marginTop: 16, marginBottom: 0 }}>
+          >
+            <img
+              src={winnerAvatar}
+              alt="Winner Avatar"
+              width={184}
+              height={184}
+              style={{
+                borderRadius: 92,
+                objectFit: 'cover',
+                border: '4px solid #020617',
+              }}
+            />
+          </div>
+
+          <h2 style={{ fontSize: 56, fontWeight: 800, color: '#ffffff', margin: 0, letterSpacing: '-1px' }}>
             @{winner.username}
           </h2>
         </div>
 
-        {/* ── Bottom Section (Host left, Powered-by right) ── */}
-        <div
-          style={{
-            display: 'flex',
-            width: '100%',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            padding: '0 50px 70px 50px',
-          }}
-        >
-          {/* Left: Hosted By */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: 18, color: '#94a3b8', marginBottom: 10 }}>Hosted By</span>
-            <img
-              src={hostAvatar}
-              alt="Host Avatar"
-              width={64}
-              height={64}
-              style={{ borderRadius: '50%', border: '3px solid #334155' }}
-            />
-            <span style={{ fontSize: 20, marginTop: 8 }}>@{host}</span>
+        {/* ── Footer Info ── */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%', zIndex: 10 }}>
+          {/* Left: Hosted By Pill */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'rgba(15, 23, 42, 0.6)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              padding: '12px 24px 12px 12px',
+              borderRadius: 99,
+            }}
+          >
+            <img src={hostAvatar} alt="Host Avatar" width={52} height={52} style={{ borderRadius: 26, border: '2px solid #475569', marginRight: 16 }} />
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: 14, color: '#94a3b8', fontWeight: 500 }}>Hosted by</span>
+              <span style={{ fontSize: 22, fontWeight: 700, color: '#f8fafc' }}>@{host}</span>
+            </div>
           </div>
 
-          {/* Right: Powered by */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: 18, color: '#94a3b8', marginBottom: 10 }}>powered by</span>
-            <img src={logoUrl} alt="Logo" width={48} height={48} />
-            <span style={{ fontSize: 20, color: '#a5b4fc', marginTop: 8 }}>@fairgiveaway</span>
+          {/* Right: Draw ID */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              padding: '16px 28px',
+            }}
+          >
+            <span style={{ fontSize: 14, color: '#64748b', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 4 }}>
+              Verified Draw ID
+            </span>
+            <span style={{ fontSize: 20, fontWeight: 600, color: '#94a3b8', fontFamily: 'monospace' }}>
+              {id}
+            </span>
           </div>
-        </div>
-
-        {/* ── Bottom Bar ── */}
-        <div
-          style={{
-            display: 'flex',
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '14px 0',
-            background: 'rgba(0,0,0,0.5)',
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-          }}
-        >
-          <span style={{ fontSize: 18, color: '#475569', fontFamily: 'monospace' }}>
-            id: {id}
-          </span>
         </div>
       </div>
     ),
