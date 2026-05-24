@@ -162,7 +162,7 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
         </div>
       )}
       <p className="text-xs text-textSecondary leading-snug">
-        <strong className="text-textPrimary">Note:</strong> Only valid public accounts are accepted. Private accounts or those hidden by the X anti-spam system cannot be included.
+        <strong className="text-textPrimary">Note:</strong> The participant count shown here may be lower than the public count displayed on X. X often inflates its numbers by including spam bots, suspended users, and private accounts. Our system filters these out automatically, guaranteeing a 100% fair draw among valid, public human participants.
       </p>
     </>
   );
@@ -235,6 +235,7 @@ export default function FinalizedSession({ data, drawId }: { data: GiveawayDoc; 
               </span>
             </div>
           </div>
+
 
           <div className="pt-6 border-t border-borderSubtle">
             <div className="text-xs font-mono text-textSecondary flex flex-col sm:flex-row sm:items-center gap-2">

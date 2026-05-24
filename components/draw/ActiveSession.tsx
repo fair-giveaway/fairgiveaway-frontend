@@ -131,10 +131,15 @@ export default function ActiveSession({ drawId, data }: Props) {
                 <FaUserGroup className="text-accentPrimary text-xs" /> Participants
               </h3>
               <span className="px-2 py-0.5 rounded-full bg-bgBase border border-borderSubtle text-xs font-bold text-textPrimary">
-                {participants.length}
+                {participants.length.toLocaleString()} Valid
               </span>
             </div>
+
+
             <ParticipantList participants={participants} />
+            <p className="mt-4 text-xs text-textSecondary leading-snug">
+              <strong className="text-textPrimary">Note:</strong> The participant count shown here may be lower than the public count displayed on X. X often inflates its numbers by including spam bots, suspended users, and private accounts. Our system filters these out automatically, guaranteeing a 100% fair draw among valid, public human participants.
+            </p>
           </div>
 
           {/* Winner config + Roll button */}
